@@ -1,4 +1,5 @@
-#include <stdlib.h>
+#include <cstdlib>
+#include <vector>
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
@@ -15,17 +16,34 @@ int main(int argc, char* argv[])
     }
 
     // Actual app
-    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
-    ctx.maximize_window();
+
+    auto ctx = p6::Context{{.title = "Explosion !!"}};
+
+    // List of square starting centers
+    std::vector<float> centers(200);
+    for (int i = 0; i < 200; i += 2)
+    {
+        centers[i]     = p6::random::number(-ctx.aspect_ratio(), ctx.aspect_ratio()); // x
+        centers[i + 1] = p6::random::number(-1.0f, 1.0f);
+    }
 
     // Declare your infinite update loop.
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Blue);
-        ctx.circle(
-            p6::Center{ctx.mouse()},
-            p6::Radius{0.2f}
-        );
+        ctx.background(p6::NamedColor::Cyan);
+        for (int i = 0; i < 100; i++)
+        {
+            p6::Color fill{1.f, 0.f, 0.f, 0.5f};
+            ctx.square(
+                p6::Center{
+                    centers[i] * ctx.time(),
+                    centers[i + 1] * ctx.time(),
+                },
+                p6::Radius{0.1f}
+            );
+        }
     };
+
+    ctx.maximize_window();
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
