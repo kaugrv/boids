@@ -2,6 +2,8 @@
 #include <vector>
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
+#include <imgui.h>
+#include "Boid.hpp"
 #include "doctest/doctest.h"
 
 int main(int argc, char* argv[])
@@ -16,30 +18,22 @@ int main(int argc, char* argv[])
     }
 
     // Actual app
+    auto ctx = p6::Context{{.title = "Boids"}};
 
-    auto ctx = p6::Context{{.title = "Explosion !!"}};
-
-    // List of square starting centers
-    std::vector<float> centers(200);
-    for (int i = 0; i < 200; i += 2)
+    // List of Boids
+    std::vector<Boid> boids(100);
+    for (int i = 0; i < 100; i++)
     {
-        centers[i]     = p6::random::number(-ctx.aspect_ratio(), ctx.aspect_ratio()); // x
-        centers[i + 1] = p6::random::number(-1.0f, 1.0f);
+        boids[i] = Boid(glm::vec2(p6::random::number(-1., 1.), p6::random::number(-1., 1.)), p6::random::number(-1., 1.), p6::random::number(0., 2 * p6::PI), 0.1);
     }
 
-    // Declare your infinite update loop.
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Cyan);
-        for (int i = 0; i < 100; i++)
+
+        for (auto& boid : boids)
         {
-            p6::Color fill{1.f, 0.f, 0.f, 0.5f};
-            ctx.square(
-                p6::Center{
-                    centers[i] * ctx.time(),
-                    centers[i + 1] * ctx.time(),
-                },
-                p6::Radius{0.1f}
-            );
+            boid.update_position(ctx.delta_time());
+            boid.draw(ctx);
         }
     };
 
@@ -47,4 +41,4 @@ int main(int argc, char* argv[])
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
-}
+};
