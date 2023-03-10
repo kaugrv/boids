@@ -4,6 +4,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
 #include "Boid.hpp"
+#include "BoidGroup.hpp"
 #include "doctest/doctest.h"
 
 int main(int argc, char* argv[])
@@ -20,21 +21,26 @@ int main(int argc, char* argv[])
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
 
-    // List of Boids
-    std::vector<Boid> boids(100);
-    for (int i = 0; i < 100; i++)
-    {
-        boids[i] = Boid(glm::vec2(p6::random::number(-1., 1.), p6::random::number(-1., 1.)), p6::random::number(-1., 1.), p6::random::number(0., 2 * p6::PI), 0.1);
-    }
+    BoidGroupBehavior GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.};
+
+    BoidGroup group_of_boids(200);
 
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Cyan);
 
-        for (auto& boid : boids)
-        {
-            boid.update_position(ctx.delta_time());
-            boid.draw(ctx);
-        }
+        // Show the official ImGui demo window
+        // ImGui::ShowDemoWindow();
+
+        ImGui::Begin("Parameters");
+        ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
+        ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
+        ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
+        ImGui::SliderFloat("Square size", &GUI.m_radius, 0.f, 1.f);
+        ImGui::End();
+
+        group_of_boids.update_behavior(GUI);
+        group_of_boids.update_all_boids(ctx.delta_time());
+        group_of_boids.draw_boids(ctx);
     };
 
     ctx.maximize_window();
