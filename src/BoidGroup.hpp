@@ -141,7 +141,7 @@ public:
             glm::vec2 dir = glm::normalize(target_position - boid.position());
 
             boid.set_direction(boid.direction() * (1 - follow_factor) + dir * follow_factor);
-            boid.update_position(delta_time);
+            // boid.update_position(delta_time);
         }
     }
 };
