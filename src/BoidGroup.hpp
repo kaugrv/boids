@@ -33,7 +33,7 @@ public:
 
     BoidGroup(const unsigned int& boid_number)
     {
-        for (uint i = 0; i < boid_number; i++)
+        for (unsigned int i = 0; i < boid_number; i++)
         {
             m_boids.push_back(generate_random_boid());
         }
@@ -58,8 +58,8 @@ public:
         if (get_neighbours(boid).empty())
             return glm::vec2(0);
 
-        glm::vec2 cohesion_vector = glm::vec2(0);
-        uint      neighbour_count = 0;
+        glm::vec2    cohesion_vector = glm::vec2(0);
+        unsigned int neighbour_count = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
@@ -76,8 +76,8 @@ public:
         if (get_neighbours(boid).empty())
             return glm::vec2(0);
 
-        glm::vec2 separation_vector = glm::vec2(0);
-        uint      neighbour_count   = 0;
+        glm::vec2    separation_vector = glm::vec2(0);
+        unsigned int neighbour_count   = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
@@ -94,8 +94,8 @@ public:
         if (get_neighbours(boid).empty())
             return glm::vec2(0);
 
-        glm::vec2 alignment_vector = glm::vec2(0);
-        uint      neighbour_count  = 0;
+        glm::vec2    alignment_vector = glm::vec2(0);
+        unsigned int neighbour_count  = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
