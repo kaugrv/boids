@@ -58,7 +58,7 @@ public:
         if (get_neighbours(boid).empty())
             return glm::vec2(0);
 
-        glm::vec2    cohesion_vector = glm::vec2(0);
+        auto         cohesion_vector = glm::vec2(0);
         unsigned int neighbour_count = 0;
 
         for (auto& neighbour : get_neighbours(boid))
@@ -76,12 +76,15 @@ public:
         if (get_neighbours(boid).empty())
             return glm::vec2(0);
 
-        glm::vec2    separation_vector = glm::vec2(0);
+        auto         separation_vector = glm::vec2(0);
         unsigned int neighbour_count   = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
-            glm::vec2 difference = -(neighbour.position() - boid.position());
+            float     dist = glm::distance(boid.position(), neighbour.position());
+            glm::vec2 difference{0};
+            if (dist != 0)
+                difference = -(neighbour.position() - boid.position()) / (dist * dist);
             neighbour_count++;
             separation_vector += difference;
         }
@@ -94,7 +97,7 @@ public:
         if (get_neighbours(boid).empty())
             return glm::vec2(0);
 
-        glm::vec2    alignment_vector = glm::vec2(0);
+        auto         alignment_vector = glm::vec2(0);
         unsigned int neighbour_count  = 0;
 
         for (auto& neighbour : get_neighbours(boid))

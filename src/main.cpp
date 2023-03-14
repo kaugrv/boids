@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
 
-    BoidGroupBehavior GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.};
+    auto GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.};
 
-    BoidGroup group_of_boids(200);
+    BoidGroup group_of_boids(50);
 
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Cyan);
