@@ -5,6 +5,7 @@
 #include <vector>
 #include "Boid.hpp"
 #include "BoidGroup.hpp"
+#include "Surveyor.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 
@@ -26,25 +27,31 @@ int main(int argc, char* argv[])
 
     // Create group
     BoidGroup group_of_boids(50);
+    Surveyor  me;
 
     glm::vec2 mouse_position(0.);
     bool      is_following        = false;
     float     follow_mouse_factor = 0.;
 
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Cyan);
+        ctx.background(p6::NamedColor::Magenta);
         mouse_position = ctx.mouse();
 
         // Show the official ImGui demo window
-        // ImGui::ShowDemoWindow();
+        ImGui::ShowDemoWindow();
 
         ImGui::Begin("Parameters");
+
+        // ImGui::InputInt("Number of boids", &GUI.m_boid_nb);
+
+        ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
+
         ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
         ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
         ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
         ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 1.f);
 
-        ImGui::Checkbox("Follow mouse", &is_following);
+        // ImGui::Checkbox("Follow mouse", &is_following);
         ImGui::SliderFloat("Follow factor", &follow_mouse_factor, 0.f, 1.f);
 
         ImGui::End();
@@ -52,8 +59,9 @@ int main(int argc, char* argv[])
         group_of_boids.update_behavior(GUI);               // Retrieve GUI slider and button changes
         group_of_boids.update_all_boids(ctx.delta_time()); // Update all boids of the group
         group_of_boids.draw_boids(ctx);
-        if (is_following)
+        if (ctx.mouse_button_is_pressed(p6::Button::Left))
             group_of_boids.reach_target(follow_mouse_factor, mouse_position);
+        me.draw(ctx);
     };
 
     ctx.maximize_window();

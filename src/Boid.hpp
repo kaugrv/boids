@@ -108,7 +108,6 @@ public:
         if (y() > 1. || y() < -1.)
         {
             m_velocity.y *= -1.;
-            std::cout << "boing" << std::endl;
         }
     }
 
@@ -120,7 +119,9 @@ public:
 
     void draw(p6::Context& ctx)
     {
-        ctx.square(
+        ctx.stroke_weight = 0.;
+        ctx.fill          = {1.f, 1.f, 0.f, 0.5f};
+        ctx.equilateral_triangle(
             p6::Center{
                 x(), y()},
             p6::Radius{
@@ -133,5 +134,5 @@ public:
 
 static Boid generate_random_boid()
 {
-    return Boid(glm::vec2(p6::random::number(-0.9f, 0.9f), p6::random::number(-0.9f, 0.9f)), p6::random::number(-1.f, 1.f), p6::random::number(0.f, 2.f * p6::PI), 0.02f);
+    return Boid(glm::vec2(p6::random::number(-0.9f, 0.9f), p6::random::number(-0.9f, 0.9f)), p6::random::number(-0.5f, 0.5f), p6::random::number(0.f, 2.f * p6::PI), 0.02f);
 }

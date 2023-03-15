@@ -14,6 +14,7 @@ struct BoidGroupBehavior {
     float m_separation;
     float m_alignment;
     float m_radius;
+    int   m_boid_nb;
 };
 
 class BoidGroup {
@@ -23,7 +24,7 @@ private:
 
 public:
     BoidGroup(const Boid& base_boid, const unsigned int& boid_number)
-        : m_behavior{.m_cohesion = 0.5, .m_separation = 0.5, .m_alignment = 0.5, .m_radius = 0.5}
+        : m_behavior{.m_cohesion = 0.5, .m_separation = 0.5, .m_alignment = 0.5, .m_radius = 0.5, .m_boid_nb = 20}
     {
         for (unsigned int i = 0; i < boid_number; i++)
         {
@@ -49,7 +50,6 @@ public:
             if (dist <= m_behavior.m_radius && &other_boid != &boid)
                 neighbours_boids.push_back(other_boid);
         }
-        std::cout << neighbours_boids.size() << std::endl;
         return neighbours_boids;
     }
 
@@ -114,8 +114,22 @@ public:
         m_behavior = gui;
     }
 
+    void update_boid_number()
+    {
+        while (m_boids.size() > m_behavior.m_boid_nb)
+        {
+            remove_boid();
+        }
+        while (m_boids.size() < m_behavior.m_boid_nb)
+        {
+            add_boid();
+        }
+    }
+
     void update_all_boids(const float& delta_time)
     {
+        update_boid_number();
+
         for (auto& boid : m_boids)
         {
             boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.direction());
@@ -137,5 +151,15 @@ public:
 
             boid.set_direction(boid.direction() * (1 - follow_factor) + dir * follow_factor);
         }
+    }
+
+    void add_boid()
+    {
+        m_boids.push_back(generate_random_boid());
+    }
+
+    void remove_boid()
+    {
+        m_boids.pop_back();
     }
 };
