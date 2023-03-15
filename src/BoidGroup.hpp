@@ -133,4 +133,15 @@ public:
         for (auto& boid : m_boids)
             boid.draw(ctx);
     }
+
+    void reach_target(const float& follow_factor, const glm::vec2& target_position, const float& delta_time)
+    {
+        for (auto& boid : m_boids)
+        {
+            glm::vec2 dir = glm::normalize(target_position - boid.position());
+
+            boid.set_direction(boid.direction() * (1 - follow_factor) + dir * follow_factor);
+            // boid.update_position(delta_time);
+        }
+    }
 };
