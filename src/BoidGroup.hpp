@@ -1,13 +1,13 @@
 #pragma once
 
-#include <cstdlib>
-#include <vector>
-#include "glm/ext/quaternion_geometric.hpp"
-#include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
+#include <cstdlib>
+#include <vector>
 #include "Boid.hpp"
 #include "doctest/doctest.h"
+#include "glm/ext/quaternion_geometric.hpp"
+#include "p6/p6.h"
 
 struct BoidGroupBehavior {
     float m_cohesion;
@@ -118,13 +118,8 @@ public:
     {
         for (auto& boid : m_boids)
         {
-            // separation
-            // alignment
-
-            // cohesion
-            boid.set_direction(cohesion(boid) + boid.direction() + alignment(boid) + separation(boid));
+            boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.direction());
             boid.update_position(delta_time);
-            // std::cout << boid.position().x << std::endl;
         }
     }
 
@@ -134,14 +129,13 @@ public:
             boid.draw(ctx);
     }
 
-    void reach_target(const float& follow_factor, const glm::vec2& target_position, const float& delta_time)
+    void reach_target(const float& follow_factor, const glm::vec2& target_position)
     {
         for (auto& boid : m_boids)
         {
             glm::vec2 dir = glm::normalize(target_position - boid.position());
 
             boid.set_direction(boid.direction() * (1 - follow_factor) + dir * follow_factor);
-            // boid.update_position(delta_time);
         }
     }
 };

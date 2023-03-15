@@ -1,12 +1,12 @@
 // #include <winuser.h>
-#include <cstdlib>
-#include <vector>
-#include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
+#include <cstdlib>
+#include <vector>
 #include "Boid.hpp"
 #include "BoidGroup.hpp"
 #include "doctest/doctest.h"
+#include "p6/p6.h"
 
 int main(int argc, char* argv[])
 {
@@ -22,8 +22,9 @@ int main(int argc, char* argv[])
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
 
-    auto GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.};
+    auto GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.5};
 
+    // Create group
     BoidGroup group_of_boids(50);
 
     glm::vec2 mouse_position(0.);
@@ -41,18 +42,18 @@ int main(int argc, char* argv[])
         ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
         ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
         ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
-        ImGui::SliderFloat("Square size", &GUI.m_radius, 0.f, 1.f);
+        ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 1.f);
 
         ImGui::Checkbox("Follow mouse", &is_following);
         ImGui::SliderFloat("Follow factor", &follow_mouse_factor, 0.f, 1.f);
 
         ImGui::End();
 
-        group_of_boids.update_behavior(GUI);
-        group_of_boids.update_all_boids(ctx.delta_time());
+        group_of_boids.update_behavior(GUI);               // Retrieve GUI slider and button changes
+        group_of_boids.update_all_boids(ctx.delta_time()); // Update all boids of the group
         group_of_boids.draw_boids(ctx);
         if (is_following)
-            group_of_boids.reach_target(follow_mouse_factor, mouse_position, ctx.delta_time());
+            group_of_boids.reach_target(follow_mouse_factor, mouse_position);
     };
 
     ctx.maximize_window();

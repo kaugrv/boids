@@ -1,11 +1,11 @@
 #pragma once
 
-#include <cstdlib>
-#include <vector>
-#include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
+#include <cstdlib>
+#include <vector>
 #include "doctest/doctest.h"
+#include "p6/p6.h"
 
 class Boid {
 private:
@@ -16,15 +16,15 @@ private:
     float     m_radius;
 
 public:
-    // constructors
+    // Constructors
     Boid() = default;
-    explicit Boid(const glm::vec2& position, const float& speed, const float& rotation = 0., const float& radius = 0.01)
+    explicit Boid(const glm::vec2& position, const float& speed, const float& rotation = 0., const float& radius = 0.01) // NOLINT
         : m_position(position), m_speed(speed), m_rotation(rotation), m_radius(radius), m_velocity(glm::vec2(cos(rotation) * speed, sin(rotation) * speed)){};
 
-    // destructor
+    // Destructor
     ~Boid() = default;
 
-    // getter
+    // Getters
     glm::vec2 position() const
     {
         return m_position;
@@ -64,16 +64,17 @@ public:
         return m_radius;
     }
 
-    // setter
+    // Setters
     void set_position(const glm::vec2& position)
     {
         m_position = position;
-    };
+    }
+
     void set_velocity(const glm::vec2& velocity)
     {
         m_velocity = velocity;
         m_speed    = glm::length(m_velocity);
-    };
+    }
 
     void set_speed(const float& speed)
     {
@@ -89,12 +90,14 @@ public:
     void set_rotation(float rotation)
     {
         m_rotation = rotation;
-    };
+    }
+
     void set_radius(float radius)
     {
         m_radius = radius;
-    };
+    }
 
+    // Boid cannot get out of 1x1 square
     void bounce()
     {
         if (x() > 1. || x() < -1.)
@@ -111,7 +114,7 @@ public:
 
     void update_position(float delta_time)
     {
-        bounce();
+        bounce(); // 1x1 square
         m_position += delta_time * m_velocity;
     }
 
@@ -130,5 +133,5 @@ public:
 
 static Boid generate_random_boid()
 {
-    return Boid(glm::vec2(p6::random::number(-0.9, 0.9), p6::random::number(-0.9, 0.9)), p6::random::number(-1., 1.), p6::random::number(0., 2 * p6::PI), 0.02);
+    return Boid(glm::vec2(p6::random::number(-0.9f, 0.9f), p6::random::number(-0.9f, 0.9f)), p6::random::number(-1.f, 1.f), p6::random::number(0.f, 2.f * p6::PI), 0.02f);
 }
