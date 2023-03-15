@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     float     follow_mouse_factor = 0.;
 
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Magenta);
+        ctx.background(p6::NamedColor::AshGrey);
         mouse_position = ctx.mouse();
 
         // Show the official ImGui demo window

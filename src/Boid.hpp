@@ -103,7 +103,6 @@ public:
         if (x() > 1. || x() < -1.)
         {
             m_velocity.x *= -1.;
-            std::cout << "boing" << std::endl;
         }
         if (y() > 1. || y() < -1.)
         {
