@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <cstdlib>
 #include <vector>
+#include "Sdf.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 
@@ -110,16 +111,42 @@ public:
         }
     }
 
+    void avoid_box(const Box& box, float delta_time)
+    {
+        const float abs_dist = fabs(box.get_distance(m_position));
+        if (abs_dist >= 0.2)
+            return;
+
+        const glm::vec2 normal = box.get_normal(m_position);
+
+        m_velocity += delta_time * normal / abs_dist;
+
+        m_velocity = glm::normalize(m_velocity) * m_speed;
+    }
+
+    void avoid_bound_box(const BoundBox& box, float delta_time)
+    {
+        const float dist = box.get_distance(m_position);
+        if (fabs(dist) >= 0.2)
+            return;
+
+        const glm::vec2 normal = box.get_normal(m_position);
+
+        m_velocity += delta_time * normal / dist;
+
+        m_velocity = glm::normalize(m_velocity) * m_speed;
+    }
+
     void update_position(float delta_time)
     {
-        bounce(); // 1x1 square
+        // bounce(); // 1x1 square
         m_position += delta_time * m_velocity;
     }
 
     void draw(p6::Context& ctx)
     {
         ctx.stroke_weight = 0.;
-        ctx.fill          = {1.f, 1.f, 0.f, 0.5f};
+        ctx.fill          = {0.f, 0.f, 0.f, 0.5f};
         ctx.equilateral_triangle(
             p6::Center{
                 x(), y()},

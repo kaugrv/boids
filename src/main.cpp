@@ -26,15 +26,18 @@ int main(int argc, char* argv[])
     auto GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.5};
 
     // Create group
-    BoidGroup group_of_boids(50);
-    Surveyor  me;
+    BoidGroup group_of_boids(1);
+    BoundBox  Bounds{glm::vec2(0.), glm::vec2(1.)};
+    Box       Box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
+
+    Surveyor me;
 
     glm::vec2 mouse_position(0.);
     bool      is_following        = false;
     float     follow_mouse_factor = 0.;
 
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::AshGrey);
+        ctx.background(p6::Color{1.f, 1.f, 1.f});
         mouse_position = ctx.mouse();
 
         // Show the official ImGui demo window
@@ -56,9 +59,13 @@ int main(int argc, char* argv[])
 
         ImGui::End();
 
-        group_of_boids.update_behavior(GUI);               // Retrieve GUI slider and button changes
-        group_of_boids.update_all_boids(ctx.delta_time()); // Update all boids of the group
+        Bounds.draw(ctx);
+        Box.draw(ctx);
+
+        group_of_boids.update_behavior(GUI);                            // Retrieve GUI slider and button changes
+        group_of_boids.update_all_boids(ctx.delta_time(), Bounds, Box); // Update all boids of the group
         group_of_boids.draw_boids(ctx);
+
         if (ctx.mouse_button_is_pressed(p6::Button::Left))
             group_of_boids.reach_target(follow_mouse_factor, mouse_position);
         me.draw(ctx);

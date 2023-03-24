@@ -126,13 +126,15 @@ public:
         }
     }
 
-    void update_all_boids(const float& delta_time)
+    void update_all_boids(const float& delta_time, const BoundBox& bound_box, const Box& box)
     {
         update_boid_number();
 
         for (auto& boid : m_boids)
         {
             boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.direction());
+            boid.avoid_bound_box(bound_box, delta_time);
+            boid.avoid_box(box, delta_time);
             boid.update_position(delta_time);
         }
     }

@@ -20,7 +20,7 @@ public:
         m_angle = (ctx.mouse_delta() == glm::vec2(0.f) ? m_angle : ctx.mouse_delta());
 
         ctx.stroke_weight = 0.;
-        ctx.fill          = {1.f, 1.f, 0.f, 1.f};
+        ctx.fill          = {0.f, 0.f, 0.f, 1.f};
         ctx.equilateral_triangle(
             p6::Center{ctx.mouse()},
             p6::Radius{
