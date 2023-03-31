@@ -98,19 +98,6 @@ public:
         m_radius = radius;
     }
 
-    // Boid cannot get out of 1x1 square
-    void bounce()
-    {
-        if (x() > 1. || x() < -1.)
-        {
-            m_velocity.x *= -1.;
-        }
-        if (y() > 1. || y() < -1.)
-        {
-            m_velocity.y *= -1.;
-        }
-    }
-
     void avoid_box(const Box& box, float delta_time)
     {
         const float abs_dist = fabs(box.get_distance(m_position));
@@ -139,7 +126,6 @@ public:
 
     void update_position(float delta_time)
     {
-        // bounce(); // 1x1 square
         m_position += delta_time * m_velocity;
     }
 

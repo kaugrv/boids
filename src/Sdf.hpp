@@ -7,7 +7,7 @@
 #include <vector>
 #include "p6/p6.h"
 
-float sdBox(glm::vec2 position, glm::vec2 box_position, glm::vec2 box_size)
+float sd_box(glm::vec2 position, glm::vec2 box_position, glm::vec2 box_size)
 {
     glm::vec2 d = abs(position - box_position) - box_size;
     float     a = glm::length(glm::vec2(fmax(d.x, 0.), fmax(d.y, 0.)));
@@ -25,7 +25,7 @@ public:
 
     float get_distance(const glm::vec2& position) const
     {
-        return sdBox(position, m_box_position, m_box_size);
+        return sd_box(position, m_box_position, m_box_size);
     }
 
     glm::vec2 get_normal(const glm::vec2& position) const

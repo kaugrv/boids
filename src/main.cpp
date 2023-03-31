@@ -22,16 +22,17 @@ int main(int argc, char* argv[])
 
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
-
     auto GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.5};
 
     // Create group
     BoidGroup group_of_boids(1);
+
+    // Create scene
     BoundBox  Bounds{glm::vec2(0.), glm::vec2(1.)};
     Box       Box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
 
+    // Mouse "boid"
     Surveyor me;
-
     glm::vec2 mouse_position(0.);
     bool      is_following        = false;
     float     follow_mouse_factor = 0.;
@@ -40,23 +41,16 @@ int main(int argc, char* argv[])
         ctx.background(p6::Color{1.f, 1.f, 1.f});
         mouse_position = ctx.mouse();
 
-        // Show the official ImGui demo window
-        ImGui::ShowDemoWindow();
+
+        ImGui::ShowDemoWindow(); // Show the official ImGui demo window
 
         ImGui::Begin("Parameters");
-
-        // ImGui::InputInt("Number of boids", &GUI.m_boid_nb);
-
         ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
-
         ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
         ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
         ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
         ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 1.f);
-
-        // ImGui::Checkbox("Follow mouse", &is_following);
         ImGui::SliderFloat("Follow factor", &follow_mouse_factor, 0.f, 1.f);
-
         ImGui::End();
 
         Bounds.draw(ctx);
