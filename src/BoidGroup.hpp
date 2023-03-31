@@ -8,6 +8,7 @@
 #include "doctest/doctest.h"
 #include "glm/ext/quaternion_geometric.hpp"
 #include "p6/p6.h"
+#include "Scene.hpp"
 
 struct BoidGroupBehavior {
     float m_cohesion;
@@ -15,6 +16,7 @@ struct BoidGroupBehavior {
     float m_alignment;
     float m_radius;
     int   m_boid_nb;
+    bool m_display_visual_range;
 };
 
 class BoidGroup {
@@ -24,7 +26,7 @@ private:
 
 public:
     BoidGroup(const Boid& base_boid, const unsigned int& boid_number)
-        : m_behavior{.m_cohesion = 0.5, .m_separation = 0.5, .m_alignment = 0.5, .m_radius = 0.5, .m_boid_nb = 20}
+        : m_behavior{.m_cohesion = 0.5, .m_separation = 0.5, .m_alignment = 0.5, .m_radius = 0.5, .m_boid_nb = 20, .m_display_visual_range = false}
     {
         for (unsigned int i = 0; i < boid_number; i++)
         {
@@ -126,15 +128,19 @@ public:
         }
     }
 
-    void update_all_boids(const float& delta_time, const BoundBox& bound_box, const Box& box)
+    void update_all_boids(const float& delta_time, const Scene& scene)
     {
         update_boid_number();
 
         for (auto& boid : m_boids)
         {
             boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.direction());
-            boid.avoid_bound_box(bound_box, delta_time);
-            boid.avoid_box(box, delta_time);
+
+            // Check collisions with all shapes of the scene (including bounds)
+            for (auto const& shape: *scene.get_shapes()) {
+                boid.avoid_shape(*shape.get(), delta_time);
+            }
+
             boid.update_position(delta_time);
         }
     }
@@ -143,7 +149,24 @@ public:
     {
         for (auto& boid : m_boids)
             boid.draw(ctx);
+        draw_visual_range(ctx);
     }
+
+    void draw_visual_range(p6::Context& ctx) {
+        if (m_behavior.m_display_visual_range) {
+
+            for (auto& boid : m_boids) {
+                ctx.circle(
+                    p6::Center{
+                        boid.x(), boid.y()},
+                    p6::Radius{
+                        m_behavior.m_radius}
+                );
+        }
+        }
+        
+    }
+
 
     void reach_target(const float& follow_factor, const glm::vec2& target_position)
     {

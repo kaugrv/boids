@@ -7,7 +7,6 @@
 #include "Sdf.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
-
 class Boid {
 private:
     glm::vec2 m_position;
@@ -98,30 +97,31 @@ public:
         m_radius = radius;
     }
 
-    void avoid_box(const Box& box, float delta_time)
-    {
-        const float abs_dist = fabs(box.get_distance(m_position));
-        if (abs_dist >= 0.2)
-            return;
 
-        const glm::vec2 normal = box.get_normal(m_position);
 
-        m_velocity += delta_time * normal / abs_dist;
+    void avoid_shape(const Shape& shape, float delta_time) {
+        if (shape.is_bounded()) {
+            const float dist = shape.get_distance(m_position);
+            if (fabs(dist) >= 0.2)
+                return;
 
-        m_velocity = glm::normalize(m_velocity) * m_speed;
-    }
+            const glm::vec2 normal = shape.get_normal(m_position);
 
-    void avoid_bound_box(const BoundBox& box, float delta_time)
-    {
-        const float dist = box.get_distance(m_position);
-        if (fabs(dist) >= 0.2)
-            return;
+            m_velocity += delta_time * normal / dist;
 
-        const glm::vec2 normal = box.get_normal(m_position);
+            m_velocity = glm::normalize(m_velocity) * m_speed;
+        }
+        else {
+            const float abs_dist = fabs(shape.get_distance(m_position));
+            if (abs_dist >= 0.2)
+                return;
 
-        m_velocity += delta_time * normal / dist;
+            const glm::vec2 normal = shape.get_normal(m_position);
 
-        m_velocity = glm::normalize(m_velocity) * m_speed;
+            m_velocity += delta_time * normal / abs_dist;
+
+            m_velocity = glm::normalize(m_velocity) * m_speed;
+        }
     }
 
     void update_position(float delta_time)
@@ -142,6 +142,8 @@ public:
                 p6::Angle(m_velocity)}
         );
     }
+
+
 };
 
 static Boid generate_random_boid()

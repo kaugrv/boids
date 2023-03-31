@@ -8,6 +8,8 @@
 #include "Surveyor.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+#include <iostream>
+#include <memory>
 
 int main(int argc, char* argv[])
 {
@@ -21,15 +23,22 @@ int main(int argc, char* argv[])
     }
 
     // Actual app
-    auto ctx = p6::Context{{.title = "Boids"}};
+        auto ctx = p6::Context{{.title = "Boids"}};
     auto GUI = BoidGroupBehavior{0.5, 0.5, 0.5, 0.5};
 
     // Create group
     BoidGroup group_of_boids(1);
 
     // Create scene
-    BoundBox  Bounds{glm::vec2(0.), glm::vec2(1.)};
-    Box       Box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
+    Scene MainScene;
+
+    Box  bounds{glm::vec2(0.), glm::vec2(1.), true};
+    Box       box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
+    Circle circle(glm::vec2(0.5,0.5), 0.2);
+
+    MainScene.add_shape(new Box(bounds));
+    MainScene.add_shape(new Box(box));
+    MainScene.add_shape(new Circle(circle));
 
     // Mouse "boid"
     Surveyor me;
@@ -42,7 +51,7 @@ int main(int argc, char* argv[])
         mouse_position = ctx.mouse();
 
 
-        ImGui::ShowDemoWindow(); // Show the official ImGui demo window
+        //ImGui::ShowDemoWindow(); // Show the official ImGui demo window
 
         ImGui::Begin("Parameters");
         ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
@@ -50,14 +59,16 @@ int main(int argc, char* argv[])
         ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
         ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
         ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 1.f);
-        ImGui::SliderFloat("Follow factor", &follow_mouse_factor, 0.f, 1.f);
+        ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
+        ImGui::SliderFloat("Mouse ollow factor", &follow_mouse_factor, 0.f, 1.f);
         ImGui::End();
 
-        Bounds.draw(ctx);
-        Box.draw(ctx);
+        bounds.draw(ctx);
+        box.draw(ctx);
+        circle.draw(ctx);
 
         group_of_boids.update_behavior(GUI);                            // Retrieve GUI slider and button changes
-        group_of_boids.update_all_boids(ctx.delta_time(), Bounds, Box); // Update all boids of the group
+        group_of_boids.update_all_boids(ctx.delta_time(), MainScene); // Update all boids of the group
         group_of_boids.draw_boids(ctx);
 
         if (ctx.mouse_button_is_pressed(p6::Button::Left))
