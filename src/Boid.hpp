@@ -7,6 +7,7 @@
 #include "Sdf.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+
 class Boid {
 private:
     glm::vec2 m_position;
@@ -97,26 +98,27 @@ public:
         m_radius = radius;
     }
 
-
-
-    void avoid_shape(const Shape& shape, float delta_time) {
-        if (shape.is_bounded()) {
-            const float dist = shape.get_distance(m_position);
+    void avoid_obstacle(const Obstacle& obstacle, float delta_time)
+    {
+        if (obstacle.is_bounded())
+        {
+            const float dist = obstacle.get_distance(m_position);
             if (fabs(dist) >= 0.2)
                 return;
 
-            const glm::vec2 normal = shape.get_normal(m_position);
+            const glm::vec2 normal = obstacle.get_normal(m_position);
 
             m_velocity += delta_time * normal / dist;
 
             m_velocity = glm::normalize(m_velocity) * m_speed;
         }
-        else {
-            const float abs_dist = fabs(shape.get_distance(m_position));
+        else
+        {
+            const float abs_dist = fabs(obstacle.get_distance(m_position));
             if (abs_dist >= 0.2)
                 return;
 
-            const glm::vec2 normal = shape.get_normal(m_position);
+            const glm::vec2 normal = obstacle.get_normal(m_position);
 
             m_velocity += delta_time * normal / abs_dist;
 
@@ -142,8 +144,6 @@ public:
                 p6::Angle(m_velocity)}
         );
     }
-
-
 };
 
 static Boid generate_random_boid()

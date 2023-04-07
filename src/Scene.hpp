@@ -1,38 +1,40 @@
 #pragma once
 
-#include "Sdf.hpp"
 #include <iostream>
 #include <memory>
 #include <vector>
+#include "Sdf.hpp"
 #include "p6/p6.h"
 
 class Scene {
-    private:
-        std::vector<std::unique_ptr<Shape>> m_Shapes;
+private:
+    std::vector<std::unique_ptr<Obstacle>> m_Obstacles;
 
-    public:
-        Scene() = default;
-        ~Scene() = default;
+public:
+    Scene()  = default;
+    ~Scene() = default;
 
-        void draw(p6::Context& ctx) {
-            for (auto& shape: m_Shapes) {
-                shape->draw(ctx);
-            }
+    void draw(p6::Context& ctx)
+    {
+        for (auto& obstacle : m_Obstacles)
+        {
+            obstacle->draw(ctx);
         }
+    }
 
-        auto get_shapes() const {
-            
-            return &m_Shapes;
-        }
+    auto get_obstacles() const
+    {
+        return &m_Obstacles;
+    }
 
-        void add_shape(Shape* shape_ptr) {
-            if(shape_ptr != nullptr)
-                m_Shapes.push_back(std::unique_ptr<Shape>(shape_ptr));
-        }
+    void add_obstacle(Obstacle* obstacle_ptr)
+    {
+        if (obstacle_ptr != nullptr)
+            m_Obstacles.push_back(std::unique_ptr<Obstacle>(obstacle_ptr));
+    }
 
-        void remove_shape() {
-            m_Shapes.pop_back();
-        }
-
+    void remove_obstacle()
+    {
+        m_Obstacles.pop_back();
+    }
 };
-
