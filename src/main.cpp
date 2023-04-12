@@ -37,11 +37,11 @@ int main(int argc, char* argv[])
 
     Box                 bounds{glm::vec2(0.), glm::vec2(1.), true};
     Box                 box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
-    Circle              circle(glm::vec2(0.5, 0.5), 0.1);
-    Circle              circle2(glm::vec2(-0.5, 0.5), 0.1);
-    Circle              circle3(glm::vec2(-0.5, -0.5), 0.1);
-    Circle              circle4(glm::vec2(0.5, -0.5), 0.1);
-    EquilateralTriangle triangle(glm::vec2(0., 0.3), 0.2);
+    Circle              circle(glm::vec2(0.5f, 0.5f), 0.1f);
+    Circle              circle2(glm::vec2(-0.5f, 0.5f), 0.1f);
+    Circle              circle3(glm::vec2(-0.5f, -0.5f), 0.1f);
+    Circle              circle4(glm::vec2(0.5f, -0.5f), 0.1f);
+    EquilateralTriangle triangle(glm::vec2(0.f, 0.3f), 0.2f);
 
     MainScene.add_obstacle(new Box(bounds));
     MainScene.add_obstacle(new Box(box));

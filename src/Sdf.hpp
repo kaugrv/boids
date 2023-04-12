@@ -26,7 +26,7 @@ public:
 
     glm::vec2 get_normal(const glm::vec2& position) const
     {
-        const float     eps = 0.0001;
+        const float     eps = 0.0001f;
         const float     dx  = get_distance(position + glm::vec2(eps, 0)) - get_distance(position - glm::vec2(eps, 0));
         const float     dy  = get_distance(position + glm::vec2(0, eps)) - get_distance(position - glm::vec2(0, eps));
         const glm::vec2 grad{dx, dy};
@@ -60,7 +60,7 @@ public:
 
     void draw(p6::Context& ctx) override
     {
-        ctx.stroke_weight = 0.01;
+        ctx.stroke_weight = 0.01f;
         ctx.fill          = {0.f, 0.f, 0.f, 0.5f};
         ctx.rectangle(
             p6::Center{
@@ -88,7 +88,7 @@ public:
 
     void draw(p6::Context& ctx) override
     {
-        ctx.stroke_weight = 0.01;
+        ctx.stroke_weight = 0.01f;
         ctx.fill          = {0.f, 0.f, 0.f, 0.5f};
         ctx.circle(
             p6::Center{
@@ -116,7 +116,7 @@ public:
 
     void draw(p6::Context& ctx) override
     {
-        ctx.stroke_weight = 0.01;
+        ctx.stroke_weight = 0.01f;
         ctx.fill          = {0.f, 0.f, 0.f, 0.5f};
         ctx.equilateral_triangle(
             p6::Center{
