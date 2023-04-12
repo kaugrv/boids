@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <memory>
 #include <vector>
 #include "Sdf.hpp"
@@ -8,7 +7,7 @@
 
 class Scene {
 private:
-    std::vector<std::unique_ptr<Obstacle>> m_Obstacles;
+    std::vector<std::unique_ptr<Obstacle>> m_Obstacles{};
 
 public:
     Scene()  = default;

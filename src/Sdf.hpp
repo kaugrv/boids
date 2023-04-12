@@ -1,53 +1,26 @@
 #pragma once
 
-#define DOCTEST_CONFIG_IMPLEMENT
-#include <imgui.h>
 #include <cmath>
-#include <cstdlib>
 #include <vector>
 #include "p6/p6.h"
 
 // Thanks to Inigo Quilez https://iquilezles.org/articles/distfunctions2d/
 
-float sd_box(const glm::vec2& position, const glm::vec2& box_position, const glm::vec2& box_size)
-{
-    glm::vec2 d = abs(position - box_position) - box_size;
-    float     a = glm::length(glm::vec2(fmax(d.x, 0.), fmax(d.y, 0.)));
-    return a + fmin(fmax(d.x, d.y), 0.0);
-}
-
-float sd_circle(const glm::vec2& position, const glm::vec2& circle_position, const float& circle_radius)
-{
-    return glm::length(position - circle_position) - circle_radius;
-}
-
-float sd_eq_triangle(const glm::vec2& position, const glm::vec2& triangle_position, const float& triangle_size)
-{
-    const float k = sqrt(3.0);
-    glm::vec2   p = position - triangle_position;
-    p.x           = std::abs(p.x) - triangle_size;
-    p.y           = p.y + triangle_size / k;
-    if (p.x + k * p.y > 0.0)
-    {
-        p = glm::vec2(p.x - k * p.y, -k * p.x - p.y);
-        p /= 2.0;
-    }
-    p.x -= std::clamp<double>(p.x, -2.0 * triangle_size, 0.0);
-    return -glm::length(p) * glm::sign(p.y);
-}
+float sd_box(const glm::vec2& position, const glm::vec2& box_position, const glm::vec2& box_size);
+float sd_circle(const glm::vec2& position, const glm::vec2& circle_position, const float& circle_radius);
+float sd_eq_triangle(const glm::vec2& position, const glm::vec2& triangle_position, const float& triangle_size);
 
 class Obstacle {
 protected:
-    glm::vec2 m_obstacle_position;
-    bool      m_bound;
+    glm::vec2 m_obstacle_position{};
+    bool      m_bound{false};
 
 public:
+    Obstacle() = default;
     explicit Obstacle(glm::vec2 obstacle_position, bool bound = false)
         : m_obstacle_position(obstacle_position), m_bound(bound){};
-    virtual ~Obstacle(){};
-
-    // Obstacle(const Obstacle& obstacle):m_obstacle_position(obstacle.m_obstacle_position),m_bound(obstacle.m_bound) {};
     Obstacle(const Obstacle& obstacle) = default;
+    virtual ~Obstacle()                = default;
 
     virtual float get_distance(const glm::vec2& m_position) const = 0;
 
@@ -71,14 +44,14 @@ public:
 
 class Box : public Obstacle {
 private:
-    glm::vec2 m_size;
+    glm::vec2 m_size{};
 
 public:
     Box(const glm::vec2& box_pos, const glm::vec2& size, bool bound = false)
         : Obstacle(box_pos, bound), m_size(size){};
     Box(const Box& box) = default;
 
-    ~Box() = default;
+    ~Box() override = default;
 
     float get_distance(const glm::vec2& position) const override
     {
@@ -100,13 +73,13 @@ public:
 
 class Circle : public Obstacle {
 private:
-    float m_radius;
+    float m_radius{};
 
 public:
     Circle(const glm::vec2& circle_pos, const float& radius, bool bound = false)
         : Obstacle(circle_pos, bound), m_radius(radius){};
     Circle(const Circle& circle) = default;
-    ~Circle()                    = default;
+    ~Circle() override           = default;
 
     float get_distance(const glm::vec2& position) const override
     {
@@ -128,13 +101,13 @@ public:
 
 class EquilateralTriangle : public Obstacle {
 private:
-    float m_size;
+    float m_size{};
 
 public:
     EquilateralTriangle(const glm::vec2& triangle_pos, const float& size, bool bound = false)
         : Obstacle(triangle_pos, bound), m_size(size){};
     EquilateralTriangle(const EquilateralTriangle& eq_triangle) = default;
-    ~EquilateralTriangle()                                      = default;
+    ~EquilateralTriangle() override                             = default;
 
     float get_distance(const glm::vec2& position) const override
     {

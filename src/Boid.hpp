@@ -1,26 +1,22 @@
 #pragma once
 
-#define DOCTEST_CONFIG_IMPLEMENT
-#include <imgui.h>
-#include <cstdlib>
-#include <vector>
 #include "Sdf.hpp"
-#include "doctest/doctest.h"
 #include "p6/p6.h"
 
 class Boid {
 private:
-    glm::vec2 m_position;
-    glm::vec2 m_velocity;
-    float     m_speed;
-    float     m_rotation;
-    float     m_radius;
+    glm::vec2 m_position{};
+    glm::vec2 m_velocity{};
+    float     m_speed{};
+    float     m_rotation{};
+    float     m_radius{};
 
 public:
     // Constructors
     Boid() = default;
+
     explicit Boid(const glm::vec2& position, const float& speed, const float& rotation = 0., const float& radius = 0.01) // NOLINT
-        : m_position(position), m_speed(speed), m_rotation(rotation), m_radius(radius), m_velocity(glm::vec2(cos(rotation) * speed, sin(rotation) * speed)){};
+        : m_position(position), m_velocity(glm::vec2(std::cos(rotation) * speed, std::sin(rotation) * speed)), m_speed(speed), m_rotation(rotation), m_radius(radius){};
 
     // Destructor
     ~Boid() = default;
@@ -103,8 +99,10 @@ public:
         if (obstacle.is_bounded())
         {
             const float dist = obstacle.get_distance(m_position);
-            if (fabs(dist) >= 0.2)
+            if (std::fabs(dist) >= 0.2)
+            {
                 return;
+            }
 
             const glm::vec2 normal = obstacle.get_normal(m_position);
 
@@ -114,9 +112,11 @@ public:
         }
         else
         {
-            const float abs_dist = fabs(obstacle.get_distance(m_position));
+            const float abs_dist = std::fabs(obstacle.get_distance(m_position));
             if (abs_dist >= 0.2)
+            {
                 return;
+            }
 
             const glm::vec2 normal = obstacle.get_normal(m_position);
 
@@ -145,8 +145,3 @@ public:
         );
     }
 };
-
-static Boid generate_random_boid()
-{
-    return Boid(glm::vec2(p6::random::number(-0.9f, 0.9f), p6::random::number(-0.9f, 0.9f)), p6::random::number(-0.5f, 0.5f), p6::random::number(0.f, 2.f * p6::PI), 0.02f);
-}

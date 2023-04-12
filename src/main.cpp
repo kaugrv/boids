@@ -20,7 +20,9 @@ int main(int argc, char* argv[])
         // The CI does not have a GPU so it cannot run the rest of the code.
         const bool no_gpu_available = argc >= 2 && strcmp(argv[1], "-nogpu") == 0; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (no_gpu_available)
+        {
             return EXIT_SUCCESS;
+        }
     }
 
     // Actual app
@@ -52,7 +54,6 @@ int main(int argc, char* argv[])
     // Mouse "boid"
     Surveyor  me;
     glm::vec2 mouse_position(0.);
-    bool      is_following        = false;
     float     follow_mouse_factor = 0.;
 
     ctx.update = [&]() {
@@ -76,6 +77,8 @@ int main(int argc, char* argv[])
         group_of_boids.update_behavior(GUI);                          // Retrieve GUI slider and button changes
         group_of_boids.update_all_boids(ctx.delta_time(), MainScene); // Update all boids of the group
         group_of_boids.draw_boids(ctx);
+
+        me.update_surveyor_position(ctx);
 
         if (ctx.mouse_button_is_pressed(p6::Button::Left))
             group_of_boids.reach_target(follow_mouse_factor, mouse_position);

@@ -1,14 +1,14 @@
 #pragma once
 
-#define DOCTEST_CONFIG_IMPLEMENT
-#include <imgui.h>
-#include <cstdlib>
 #include <vector>
 #include "Boid.hpp"
 #include "Scene.hpp"
-#include "doctest/doctest.h"
-#include "glm/ext/quaternion_geometric.hpp"
 #include "p6/p6.h"
+
+static Boid generate_random_boid()
+{
+    return Boid(glm::vec2(p6::random::number(-0.9f, 0.9f), p6::random::number(-0.9f, 0.9f)), p6::random::number(-0.5f, 0.5f), p6::random::number(0.f, 2.f * p6::PI), 0.02f);
+}
 
 struct BoidGroupBehavior {
     float m_cohesion{0.5};
@@ -21,20 +21,19 @@ struct BoidGroupBehavior {
 
 class BoidGroup {
 private:
-    std::vector<Boid> m_boids;
-    BoidGroupBehavior m_behavior;
+    std::vector<Boid> m_boids{};
+    BoidGroupBehavior m_behavior{};
 
 public:
     BoidGroup(const Boid& base_boid, const unsigned int& boid_number)
-        : m_behavior()
     {
         for (unsigned int i = 0; i < boid_number; i++)
         {
-            m_boids.push_back(base_boid);
+            add_boid(base_boid);
         }
     }
 
-    BoidGroup(const unsigned int& boid_number)
+    explicit BoidGroup(const unsigned int& boid_number)
     {
         for (unsigned int i = 0; i < boid_number; i++)
         {
@@ -118,13 +117,13 @@ public:
 
     void update_boid_number()
     {
-        while (m_boids.size() > m_behavior.m_boid_nb)
+        while (m_boids.size() > static_cast<size_t>(m_behavior.m_boid_nb))
         {
             remove_boid();
         }
-        while (m_boids.size() < m_behavior.m_boid_nb)
+        while (m_boids.size() < static_cast<size_t>(m_behavior.m_boid_nb))
         {
-            add_boid();
+            add_boid(generate_random_boid());
         }
     }
 
@@ -139,7 +138,7 @@ public:
             // Check collisions with all obstacles of the scene (including bounds)
             for (auto const& obstacle : *scene.get_obstacles())
             {
-                boid.avoid_obstacle(*obstacle.get(), delta_time);
+                boid.avoid_obstacle(*obstacle, delta_time);
             }
 
             boid.update_position(delta_time);
@@ -181,9 +180,9 @@ public:
         }
     }
 
-    void add_boid()
+    void add_boid(const Boid& boid)
     {
-        m_boids.push_back(generate_random_boid());
+        m_boids.push_back(boid);
     }
 
     void remove_boid()
