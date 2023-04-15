@@ -1,16 +1,61 @@
 // #include <winuser.h>
-#include "Sdf.hpp"
+// BOIDS INCLUDE
+#include "BOIDS/Sdf.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "Boid.hpp"
-#include "BoidGroup.hpp"
-#include "Surveyor.hpp"
+#include "BOIDS/Boid.hpp"
+#include "BOIDS/BoidGroup.hpp"
+#include "BOIDS/Surveyor.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+
+// 3D INCLUDE
+//  #include <GL/glext.h>
+#include <algorithm>
+#include <array>
+#include <cmath>
+// #include <glimac/FilePath.hpp>
+#include <utility>
+// #include "glimac/Image.hpp"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/scalar_constants.hpp"
+#include "glm/fwd.hpp"
+#include "light.hpp"
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+// #include <glimac/Program.hpp>
+// #include <glimac/Sphere.hpp>
+// #include <glimac/glm.hpp>
+#include "3D_RENDER/Input_Movement.hpp"
+#include "3D_RENDER/Material.hpp"
+#include "3D_RENDER/Mesh.hpp"
+#include "3D_RENDER/Texture.hpp"
+#include "3D_RENDER/free_camera.hpp"
+#include "3D_RENDER/random_sphere.hpp"
+#include "3D_RENDER/shader_program.hpp"
+#include "3D_RENDER/track_ball_camera.hpp"
+
+namespace fs = std::filesystem;
+
+// 3D STUFF
+static const MovementInput keyboard = MovementInput{
+    .forward_key  = GLFW_KEY_W,
+    .backward_key = GLFW_KEY_S,
+    .left_key     = GLFW_KEY_A,
+    .right_key    = GLFW_KEY_D,
+    .up_key       = GLFW_KEY_Q,
+    .down_key     = GLFW_KEY_E};
+
+// keep it
+void updateTrackBallCamera(TrackballCamera& cam, double delta = 0.);
+void debug_movement_input(MovementInput input);
 
 int main(int argc, char* argv[])
 {
@@ -56,12 +101,60 @@ int main(int argc, char* argv[])
     glm::vec2 mouse_position(0.);
     float     follow_mouse_factor = 0.;
 
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+
+    // cams
+    TrackballCamera trackBallCamera = TrackballCamera(-5, 0, 0);
+    FreeCamera      freeCam         = FreeCamera();
+
+    // THE MATRIX => TO CHANGE : Might never be there / method of function with the camera ?
+    glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    glm::mat4 ProjMatrix   = glm::perspective<float>(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
+    glm::mat4 MVPMatrix    = ProjMatrix * MVMatrix;
+    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix)); // transforms tha affect normals
+
+    // load shader
+    p6::Shader blinnPhongProgram = p6::load_shader("src/3D_RENDER/shaders/3D.vs.glsl", "src/3D_RENDER/shaders/light.fs.glsl");
+
+    DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
+
+    /// push them into the list
+    std::vector<PointLight>       list_light;
+    std::vector<DirectionalLight> list_dir_light;
+    list_dir_light.push_back(dir_light);
+
+    Material material{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2.};
+    // texture
+
+    p6::Image moon_image = p6::load_image("../assets/texture/MoonMap.jpg");
+
+    fs::path relative_path = fs::current_path();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+    /////////////////
+
     ctx.update = [&]() {
         ctx.background(p6::Color{1.f, 1.f, 1.f});
         mouse_position = ctx.mouse();
 
-        // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
+        // THE BOID PART
 
+        // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
+        /*
         ImGui::Begin("Parameters");
         ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
         ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
@@ -83,6 +176,16 @@ int main(int argc, char* argv[])
         if (ctx.mouse_button_is_pressed(p6::Button::Left))
             group_of_boids.reach_target(follow_mouse_factor, mouse_position);
         me.draw(ctx);
+
+        */
+
+        /////////////////
+        /////////////////
+        /////////////////
+        /////////////////
+        /////////////////
+        /////////////////
+        /////////////////
     };
 
     ctx.maximize_window();
