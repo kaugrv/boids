@@ -11,9 +11,8 @@
 #include "glm/fwd.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <glimac/glm.hpp>
 #include "Input_Movement.hpp"
+#include "glm/gtx/transform.hpp"
 
 class TrackballCamera {
 private:
@@ -61,8 +60,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const TrackballCamera& cam);
 };
 
-inline std::ostream& operator<<(std::ostream& os, const TrackballCamera& cam)
-{
-    os << cam.m_fDistance << '/' << cam.m_fAngleX << '/' << cam.m_fAngleY;
-    return os;
-}
+// inline std::ostream& operator<<(std::ostream& os, const TrackballCamera& cam)
+// {
+//     os << cam.m_fDistance << '/' << cam.m_fAngleX << '/' << cam.m_fAngleY;
+//     return os;
+// }

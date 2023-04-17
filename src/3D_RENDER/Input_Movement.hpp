@@ -11,8 +11,7 @@
 #include "glm/fwd.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <glimac/glm.hpp>
+#include "p6/p6.h"
 
 // struture de la souris
 struct Mouse {
@@ -31,20 +30,20 @@ struct MovementInput {
     int up_pressed;
     int down_pressed;
 
-    int forward_key;
-    int backward_key;
-    int left_key;
-    int right_key;
-    int up_key;
-    int down_key;
+    int forward_key  = GLFW_KEY_W;
+    int backward_key = GLFW_KEY_S;
+    int left_key     = GLFW_KEY_A;
+    int right_key    = GLFW_KEY_D;
+    int up_key       = GLFW_KEY_Q;
+    int down_key     = GLFW_KEY_E;
 
-    void update_pressed_values(GLFWwindow* window)
+    void update_pressed_values(const p6::Context& ctx)
     {
-        forward_pressed  = glfwGetKey(window, forward_key);
-        backward_pressed = glfwGetKey(window, backward_key);
-        left_pressed     = glfwGetKey(window, left_key);
-        right_pressed    = glfwGetKey(window, right_key);
-        up_pressed       = glfwGetKey(window, up_key);
-        down_pressed     = glfwGetKey(window, down_key);
+        forward_pressed  = ctx.key_is_pressed(forward_key);
+        backward_pressed = ctx.key_is_pressed(backward_key);
+        left_pressed     = ctx.key_is_pressed(left_key);
+        right_pressed    = ctx.key_is_pressed(right_key);
+        up_pressed       = ctx.key_is_pressed(up_key);
+        down_pressed     = ctx.key_is_pressed(down_key);
     }
 };

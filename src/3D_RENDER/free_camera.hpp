@@ -7,8 +7,9 @@
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
 #define GLFW_INCLUDE_NONE
-#include <glimac/glm.hpp>
 #include "Input_Movement.hpp"
+#include "glm/gtx/transform.hpp"
+#include "p6/p6.h"
 
 class FreeCamera {
 private:
@@ -68,7 +69,7 @@ public:
         return glm::lookAt(m_Position, m_Position + m_FrontVector, m_Upvector);
     }
 
-    void updateFreeCamera(const float& delta_time, const Mouse& mouse, const MovementInput keyboard);
+    void updateFreeCamera(const p6::Context& ctx, const MovementInput& keyboard);
 
     friend std::ostream& operator<<(std::ostream& os, const FreeCamera& cam);
 };

@@ -10,8 +10,6 @@
 #include "glm/fwd.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <glimac/glm.hpp>
 
 struct PointLight {
     glm::vec3 position;
@@ -28,9 +26,9 @@ struct DirectionalLight {
     float     intensity;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const PointLight& col)
-{
-    os << "color : " << col.color << std::endl;
-    os << "pos : " << col.position;
-    return os;
-}
+// inline std::ostream& operator<<(std::ostream& os, const PointLight& col)
+// {
+//     os << "color : " << col.color << std::endl;
+//     os << "pos : " << col.position;
+//     return os;
+// }

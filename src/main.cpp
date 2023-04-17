@@ -22,17 +22,13 @@
 // #include <glimac/FilePath.hpp>
 #include <utility>
 // #include "glimac/Image.hpp"
+#include "3D_RENDER/light.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
-#include "light.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
-// #include <glimac/Program.hpp>
-// #include <glimac/Sphere.hpp>
-// #include <glimac/glm.hpp>
 #include "3D_RENDER/Input_Movement.hpp"
 #include "3D_RENDER/Material.hpp"
 #include "3D_RENDER/Mesh.hpp"
@@ -43,15 +39,6 @@
 #include "3D_RENDER/track_ball_camera.hpp"
 
 namespace fs = std::filesystem;
-
-// 3D STUFF
-static const MovementInput keyboard = MovementInput{
-    .forward_key  = GLFW_KEY_W,
-    .backward_key = GLFW_KEY_S,
-    .left_key     = GLFW_KEY_A,
-    .right_key    = GLFW_KEY_D,
-    .up_key       = GLFW_KEY_Q,
-    .down_key     = GLFW_KEY_E};
 
 // keep it
 void updateTrackBallCamera(TrackballCamera& cam, double delta = 0.);
@@ -96,6 +83,9 @@ int main(int argc, char* argv[])
     MainScene.add_obstacle(new Circle(circle4));
     MainScene.add_obstacle(new EquilateralTriangle(triangle));
 
+    // 3D STUFF
+    MovementInput keyboard = MovementInput{};
+
     // Mouse "boid"
     Surveyor  me;
     glm::vec2 mouse_position(0.);
@@ -120,7 +110,7 @@ int main(int argc, char* argv[])
     glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix)); // transforms tha affect normals
 
     // load shader
-    p6::Shader blinnPhongProgram = p6::load_shader("src/3D_RENDER/shaders/3D.vs.glsl", "src/3D_RENDER/shaders/light.fs.glsl");
+    p6::Shader blinnPhongProgram = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
 
     DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
 
@@ -132,13 +122,14 @@ int main(int argc, char* argv[])
     Material material{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2.};
     // texture
 
-    p6::Image moon_image = p6::load_image("../assets/texture/MoonMap.jpg");
+    p6::Image moon_image = p6::load_image("../assets/models/MoonMap.jpg");
 
-    fs::path relative_path = fs::current_path();
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    glimac::Sphere sphr(1, 16, 32);
+    Mesh           mesh(sphr);
     /////////////////
     /////////////////
     /////////////////
@@ -148,8 +139,9 @@ int main(int argc, char* argv[])
     /////////////////
 
     ctx.update = [&]() {
-        ctx.background(p6::Color{1.f, 1.f, 1.f});
+        // ctx.background(p6::Color{0.f, 1.f, 1.f});
         mouse_position = ctx.mouse();
+        keyboard.update_pressed_values(ctx);
 
         // THE BOID PART
 
@@ -186,6 +178,14 @@ int main(int argc, char* argv[])
         /////////////////
         /////////////////
         /////////////////
+
+        freeCam.updateFreeCamera(ctx, keyboard);
+        blinnPhongProgram.use();
+        glm::mat4 MV = freeCam.getViewMatrix();
+        set_blinn_phong(blinnPhongProgram, material, list_light, list_dir_light, MV, ProjMatrix);
+
+        glBindVertexArray(mesh.get_vao());
+        glDrawArrays(GL_TRIANGLES, 0, mesh.get_vertex_count());
     };
 
     ctx.maximize_window();

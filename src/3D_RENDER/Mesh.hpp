@@ -1,10 +1,9 @@
 #pragma once
 
-#include "glimac/Sphere.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <glimac/glm.hpp>
+#include "glimac_sphere/Sphere.hpp"
+#include "p6/p6.h"
 
 void fill_vbo(GLuint& m_vbo, const glimac::Sphere& sphr)
 {
