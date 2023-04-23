@@ -26,9 +26,16 @@ struct DirectionalLight {
     float     intensity;
 };
 
-// inline std::ostream& operator<<(std::ostream& os, const PointLight& col)
-// {
-//     os << "color : " << col.color << std::endl;
-//     os << "pos : " << col.position;
-//     return os;
-// }
+std::ostream& operator<<(std::ostream& os, glm::mat4 mat4)
+{
+    glm::mat4 mat4_2 = mat4;
+    os << "[" << mat4_2[0][0] << " , " << mat4_2[1][0] << " , " << mat4_2[2][0] << " , " << mat4_2[3][0] << "]"
+       << "\n";
+    os << "[" << mat4_2[0][1] << " , " << mat4_2[1][1] << " , " << mat4_2[2][1] << " , " << mat4_2[3][1] << "]"
+       << "\n";
+    os << "[" << mat4_2[0][2] << " , " << mat4_2[1][2] << " , " << mat4_2[2][2] << " , " << mat4_2[3][2] << "]"
+       << "\n";
+    os << "[" << mat4_2[0][3] << " , " << mat4_2[1][3] << " , " << mat4_2[2][3] << " , " << mat4_2[3][3] << "]"
+       << "\n";
+    return os;
+}

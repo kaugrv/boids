@@ -73,14 +73,17 @@ vec3 fog()
 void main()
 {
     vec3 point_light = vec3(0.);
-    for (int i = 0; i < nb_light; i++) {
+    for (int i = 0; i < nb_light; i++)
+    {
         point_light += Blinn_Phong(i);
     }
 
     vec3 dir_light = vec3(0.);
-    for (int i = 0; i < nb_light_directionnal; i++) {
+    for (int i = 0; i < nb_light_directionnal; i++)
+    {
         dir_light += Blinn_Phong_directionnal(i);
     }
 
     fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
+    fFragColor = vec3(0.);
 }

@@ -1,6 +1,7 @@
 // #include <winuser.h>
 // BOIDS INCLUDE
 #include "BOIDS/Sdf.hpp"
+#include "glm/matrix.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
 #include <cstdlib>
@@ -37,12 +38,6 @@
 #include "3D_RENDER/random_sphere.hpp"
 #include "3D_RENDER/shader_program.hpp"
 #include "3D_RENDER/track_ball_camera.hpp"
-
-namespace fs = std::filesystem;
-
-// keep it
-void updateTrackBallCamera(TrackballCamera& cam, double delta = 0.);
-void debug_movement_input(MovementInput input);
 
 int main(int argc, char* argv[])
 {
@@ -83,13 +78,12 @@ int main(int argc, char* argv[])
     MainScene.add_obstacle(new Circle(circle4));
     MainScene.add_obstacle(new EquilateralTriangle(triangle));
 
+    // Mouse "boid"
+    Surveyor me;
+    float    follow_mouse_factor = 0.;
+
     // 3D STUFF
     MovementInput keyboard = MovementInput{};
-
-    // Mouse "boid"
-    Surveyor  me;
-    glm::vec2 mouse_position(0.);
-    float     follow_mouse_factor = 0.;
 
     /////////////////
     /////////////////
@@ -103,11 +97,8 @@ int main(int argc, char* argv[])
     TrackballCamera trackBallCamera = TrackballCamera(-5, 0, 0);
     FreeCamera      freeCam         = FreeCamera();
 
-    // THE MATRIX => TO CHANGE : Might never be there / method of function with the camera ?
-    glm::mat4 MVMatrix     = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
-    glm::mat4 ProjMatrix   = glm::perspective<float>(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-    glm::mat4 MVPMatrix    = ProjMatrix * MVMatrix;
-    glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix)); // transforms tha affect normals
+    glm::mat4 view_matrix = glm::translate(glm::mat4(1), glm::vec3(0, 0, -5));
+    glm::mat4 ProjMatrix  = glm::perspective<float>(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
 
     // load shader
     p6::Shader blinnPhongProgram = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
@@ -117,11 +108,11 @@ int main(int argc, char* argv[])
     /// push them into the list
     std::vector<PointLight>       list_light;
     std::vector<DirectionalLight> list_dir_light;
-    list_dir_light.push_back(dir_light);
+    // list_dir_light.push_back(dir_light);
 
     Material material{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2.};
-    // texture
 
+    // texture
     p6::Image moon_image = p6::load_image("../assets/models/MoonMap.jpg");
 
     glEnable(GL_DEPTH_TEST);
@@ -130,6 +121,9 @@ int main(int argc, char* argv[])
 
     glimac::Sphere sphr(1, 16, 32);
     Mesh           mesh(sphr);
+
+    // auto list_axis = generate_spherical_vector(10, 0.5);
+    // auto list_pos  = generate_spherical_vector(10, 2);
     /////////////////
     /////////////////
     /////////////////
@@ -139,9 +133,12 @@ int main(int argc, char* argv[])
     /////////////////
 
     ctx.update = [&]() {
-        // ctx.background(p6::Color{0.f, 1.f, 1.f});
-        mouse_position = ctx.mouse();
+        ctx.background(p6::Color{0.f, 0.f, 0.5f});
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // glad_glClearColor(0., 0., 0.5, 1.);
+
         keyboard.update_pressed_values(ctx);
+        // keyboard.debug_movement_input();
 
         // THE BOID PART
 
@@ -178,14 +175,22 @@ int main(int argc, char* argv[])
         /////////////////
         /////////////////
         /////////////////
-
-        freeCam.updateFreeCamera(ctx, keyboard);
+        // std::cout << MV << "\n \n";
+        glBindVertexArray(mesh.get_vao());
         blinnPhongProgram.use();
-        glm::mat4 MV = freeCam.getViewMatrix();
+        freeCam.updateFreeCamera(ctx, keyboard);
+        view_matrix = freeCam.getViewMatrix();
+
+        glm::mat4 M = glm::rotate(glm::mat4(1.), ctx.time(), glm::vec3(0., 1., 0.)); // Model Matrix for the sphere
+
+        glm::mat4 MV = view_matrix * M;
+
         set_blinn_phong(blinnPhongProgram, material, list_light, list_dir_light, MV, ProjMatrix);
 
-        glBindVertexArray(mesh.get_vao());
+        // glActiveTexture(GL_TEXTURE0);
         glDrawArrays(GL_TRIANGLES, 0, mesh.get_vertex_count());
+        // glBindTexture(GL_TEXTURE_2D, 0);
+        glBindVertexArray(0);
     };
 
     ctx.maximize_window();

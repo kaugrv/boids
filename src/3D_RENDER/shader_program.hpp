@@ -1,24 +1,13 @@
 #pragma once
 
-#include <vcruntime.h>
-#include <vcruntime_typeinfo.h>
-#include <algorithm>
-#include <array>
-#include <cmath>
-#include <utility>
+#include <ostream>
 #include <vector>
 #include "3D_RENDER/Material.hpp"
-#include "3D_RENDER/shader_program.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
-#include "glm/gtc/random.hpp"
-#include "light.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <filesystem>
-#include <string_view>
-#include <typeinfo>
 #include "3D_RENDER/light.hpp"
 #include "p6/p6.h"
 
@@ -41,13 +30,22 @@ void set_matrix(p6::Shader& shader, const glm::mat4& MV, const glm::mat4& ProjMa
     shader.set("uMVMatrix", MV);
     shader.set("uNormalMatrix", glm::transpose(glm::inverse(MV)));
     shader.set("uMVPMatrix", ProjMatrix * MV);
+
+    std::cout << (ProjMatrix * MV) << " proj * MV"
+              << "\n \n";
+
+    std::cout << MV << " MV"
+              << "\n \n";
+
+    std::cout << ProjMatrix << " proj"
+              << "\n \n \n \n \n \n";
 }
 
 void set_material(p6::Shader& shader, const Material& material)
 {
-    shader.set("uDiffuse", material.diffuse);
-    shader.set("uGlossy", material.glossy);
-    shader.set("uShininess", material.shininess);
+    shader.set("K_d", material.diffuse);
+    shader.set("K_s", material.glossy);
+    shader.set("shininess", material.shininess);
 }
 
 template<typename T> // works for point and directionnal light
@@ -57,9 +55,13 @@ void send_light(p6::Shader& shader, const std::vector<T>& list_light, const glm:
     if (is_directionnal)
     {
         send_light_dir_uniform(shader, lights_datas);
+    }
+    else
+    {
         send_light_pos_uniform(shader, lights_datas);
     }
 }
+
 void set_lights(p6::Shader& shader, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& view_mat)
 {
     send_light<PointLight>(shader, list_light, view_mat, false);

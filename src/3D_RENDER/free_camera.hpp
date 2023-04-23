@@ -27,7 +27,7 @@ private:
 public:
     FreeCamera()
     {
-        m_Position = glm::vec3(0.);
+        m_Position = glm::vec3(-5., 0., 0.);
         m_fPhi     = glm::pi<float>();
         m_fTheta   = 0.;
 

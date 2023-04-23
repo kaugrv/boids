@@ -50,11 +50,11 @@ public:
         mv = glm::rotate(mv, m_fAngleX, glm::vec3(1., 0., 0.));
         return mv;
     }
-    void updateTrackBallCamera(double delta, Mouse mouse)
+    void updateTrackBallCamera(float front_speed, glm::vec2 mouse_delta, float delta_time)
     {
-        rotateLeft(mouse.delta.x / 100);
-        rotateUp(mouse.delta.y / 100);
-        moveFront(delta);
+        rotateLeft(mouse_delta.x * delta_time / 100);
+        rotateUp(mouse_delta.y / delta_time / 100);
+        moveFront(front_speed * delta_time);
     }
 
     friend std::ostream& operator<<(std::ostream& os, const TrackballCamera& cam);

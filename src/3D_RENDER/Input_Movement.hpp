@@ -9,6 +9,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
+#include "glm/matrix.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include "p6/p6.h"
@@ -45,5 +46,12 @@ struct MovementInput {
         right_pressed    = ctx.key_is_pressed(right_key);
         up_pressed       = ctx.key_is_pressed(up_key);
         down_pressed     = ctx.key_is_pressed(down_key);
+    }
+    void debug_movement_input() const
+    {
+        std::cout << "Up : " << static_cast<char>(up_key) << " / " << up_pressed << std::endl;
+        std::cout << "left : " << static_cast<char>(left_key) << " / " << left_pressed << std::endl;
+        std::cout << "right : " << static_cast<char>(right_key) << " / " << right_pressed << std::endl;
+        std::cout << "down : " << static_cast<char>(down_key) << " / " << down_pressed << std::endl;
     }
 };

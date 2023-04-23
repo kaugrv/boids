@@ -50,16 +50,16 @@ public:
 
     ~Mesh()
     {
-        glDeleteBuffers(1, get_vao_ptr());
-        glDeleteVertexArrays(1, get_vbo_ptr());
+        glDeleteBuffers(1, &m_vbo);
+        glDeleteVertexArrays(1, &m_vao);
     };
 
     // TODO constructor from a file path (.obj)
     Mesh(const glimac::Sphere& sphr)
+        : vertex_count(sphr.getVertexCount())
     {
         fill_vbo(m_vbo, sphr);
         setup_vao(m_vao, m_vbo);
-        vertex_count = sphr.getVertexCount();
     }
     GLuint get_vao()
     {
@@ -69,16 +69,6 @@ public:
     {
         return m_vbo;
     }
-
-    GLuint* get_vao_ptr()
-    {
-        return &m_vao;
-    }
-    GLuint* get_vbo_ptr()
-    {
-        return &m_vbo;
-    }
-
     GLsizei get_vertex_count()
     {
         return vertex_count;
