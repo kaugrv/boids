@@ -18,9 +18,17 @@
 struct Mouse {
     glm::dvec2 position{};
     glm::dvec2 delta{};
-    double     scroll{};
 
-    int is_left_button_pressed;
+    bool is_left_button_pressed;
+    bool is_right_button_pressed;
+
+    void update_mouse(const p6::Context& ctx) {
+        position = ctx.mouse();
+        delta = ctx.mouse_delta();
+
+        is_left_button_pressed = ctx.mouse_button_is_pressed(p6::Button::Left);
+        is_right_button_pressed = ctx.mouse_button_is_pressed(p6::Button::Right);
+    }
 };
 
 struct MovementInput {

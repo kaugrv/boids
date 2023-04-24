@@ -11,7 +11,6 @@ uniform mat4 uMVPMatrix;
 uniform mat4 uMVMatrix;
 uniform mat4 uNormalMatrix;
 
-
 out vec3 vertexPos;  // in view coordinates
 out vec3 vertexNormal; // in view coordinates
 out vec2 texCoord;

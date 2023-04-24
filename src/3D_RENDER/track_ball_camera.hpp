@@ -50,18 +50,24 @@ public:
         mv = glm::rotate(mv, m_fAngleX, glm::vec3(1., 0., 0.));
         return mv;
     }
-    void updateTrackBallCamera(float front_speed, glm::vec2 mouse_delta, float delta_time)
+    void updateTrackBallCamera(glm::vec2 mouse_delta, bool is_left_button_pressed, bool is_right_button_pressed)
     {
-        rotateLeft(mouse_delta.x * delta_time / 100);
-        rotateUp(mouse_delta.y / delta_time / 100);
-        moveFront(front_speed * delta_time);
+        if (is_left_button_pressed) {
+            rotateLeft(mouse_delta.x);
+            rotateUp(mouse_delta.y);
+        }
+    if (is_right_button_pressed) {
+            moveFront(mouse_delta.y);
+        }
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const TrackballCamera& cam);
-};
+    //     // Camera commands
+    // if (windowManager.isMouseButtonPressed(SDL_BUTTON_LEFT)) {
+    //   C.rotateLeft((endPos - startPos).x);
+    //   C.rotateUp((endPos - startPos).y);
+    // }
+    // if (windowManager.isMouseButtonPressed(SDL_BUTTON_RIGHT)) {
+    //   C.moveFront((endPos - startPos).y / 100.);
+    // }
 
-// inline std::ostream& operator<<(std::ostream& os, const TrackballCamera& cam)
-// {
-//     os << cam.m_fDistance << '/' << cam.m_fAngleX << '/' << cam.m_fAngleY;
-//     return os;
-// }
+};

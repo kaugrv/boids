@@ -84,6 +84,7 @@ void main()
         dir_light += Blinn_Phong_directionnal(i);
     }
 
-    fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
-    fFragColor = vec3(0.);
+    // fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
+    // fFragColor = vec3(1.,1.,0.);
+    fFragColor = (vertexNormal);
 }

@@ -27,18 +27,18 @@ glm::vec3 transform_in_view_space(glm::vec3 vector, glm::mat4 view_matrix, int i
 
 void set_matrix(p6::Shader& shader, const glm::mat4& MV, const glm::mat4& ProjMatrix)
 {
+    shader.set("uMVPMatrix", ProjMatrix * MV);
     shader.set("uMVMatrix", MV);
     shader.set("uNormalMatrix", glm::transpose(glm::inverse(MV)));
-    shader.set("uMVPMatrix", ProjMatrix * MV);
 
-    std::cout << (ProjMatrix * MV) << " proj * MV"
-              << "\n \n";
+    // std::cout << (ProjMatrix * MV) << " proj * MV"
+    //           << "\n \n";
 
-    std::cout << MV << " MV"
-              << "\n \n";
+    // std::cout << MV << " MV"
+    //           << "\n \n";
 
-    std::cout << ProjMatrix << " proj"
-              << "\n \n \n \n \n \n";
+    // std::cout << ProjMatrix << " proj"
+    //           << "\n \n \n \n \n \n";
 }
 
 void set_material(p6::Shader& shader, const Material& material)
