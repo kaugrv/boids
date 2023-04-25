@@ -101,14 +101,14 @@ void send_light_dir_uniform(p6::Shader& shader, const lightDatas& light_datas)
     shader.set("nb_light_directionnal", nb_light);
 }
 
-glm::vec3 get_position_or_direction(PointLight light)
+glm::vec4 get_position_or_direction_homogene(PointLight light)
 {
-    return light.position;
+    return glm::vec4(light.position,1.);
 }
 
-glm::vec3 get_position_or_direction(DirectionalLight light)
+glm::vec4 get_position_or_direction_homogene(DirectionalLight light)
 {
-    return light.direction;
+    return glm::vec4(light.direction,0.);
 }
 
 template<typename T>
@@ -117,8 +117,8 @@ lightDatas fill_light_data(const std::vector<T>& list_light, const glm::mat4& vi
     lightDatas lights_datas;
     for (auto const& light : list_light)
     {
-        glm::vec3 pos_or_dir      = get_position_or_direction(light);
-        glm::vec3 pos_or_dir_view = transform_in_view_space(pos_or_dir, view_mat, 1); // in view space
+        glm::vec4 pos_or_dir_H = get_position_or_direction_homogene(light);
+        glm::vec3 pos_or_dir_view = transform_in_view_space(glm::vec3(pos_or_dir_H), view_mat, pos_or_dir_H.w); // in view space
 
         lights_datas.position_or_direction_view.push_back(pos_or_dir_view);
         lights_datas.list_color.push_back(light.color);

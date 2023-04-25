@@ -7,7 +7,7 @@ in vec2 texCoord;
 
 uniform sampler2D uTexture;
 
-out vec3 fFragColor;
+out vec4 fFragColor;
 
 // LIGHTS DATA
 // Point
@@ -36,7 +36,7 @@ vec3 Blinn_Phong(int i)
 
     vec3 halfVector = normalize((w_o + light_dir) / 2.);
 
-    vec3 diffuse = K_d * dot(light_dir, vertexNormal);
+    vec3 diffuse = K_d * max(dot(light_dir, vertexNormal),0.);
     vec3 glossy  = K_s * (pow(max(dot(halfVector, vertexNormal), 0.), shininess));
 
     float light_distance_i = distance(w_i[i], vertexPos);
@@ -44,7 +44,7 @@ vec3 Blinn_Phong(int i)
     vec3 light_factor = intensity[i] * L_i[i] / (light_distance_i * light_distance_i);
 
     // return glossy;
-    return light_factor * (diffuse + glossy);
+    return light_factor * ( diffuse+glossy);
 }
 
 vec3 Blinn_Phong_directionnal(int i)
@@ -84,8 +84,8 @@ void main()
         dir_light += Blinn_Phong_directionnal(i);
     }
 
-    fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
-    fFragColor = texture(uTexture, texCoord).xyz;
-    fFragColor = vec3(nb_light);
-    // fFragColor = dir_light;
+    // fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
+    fFragColor = vec4(point_light + dir_light,1.);
+    // fFragColor = vec4(vertexNormal,1.);
+
 }
