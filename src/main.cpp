@@ -102,12 +102,14 @@ int main(int argc, char* argv[])
 
 
     // Create lights
-    // DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
+    DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
+    PointLight point_light{.position = glm::vec3{1.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 1.5};
 
     /// Push them into the list
     std::vector<PointLight>       list_light;
     std::vector<DirectionalLight> list_dir_light;
-    // list_dir_light.push_back(dir_light);
+    list_dir_light.push_back(dir_light);
+    list_light.push_back(point_light);
 
     // Material
     Material material{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2.};

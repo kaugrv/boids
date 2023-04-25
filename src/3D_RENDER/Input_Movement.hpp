@@ -43,8 +43,8 @@ struct MovementInput {
     int backward_key = GLFW_KEY_S;
     int left_key     = GLFW_KEY_A;
     int right_key    = GLFW_KEY_D;
-    int up_key       = GLFW_KEY_Q;
-    int down_key     = GLFW_KEY_E;
+    int up_key       = GLFW_KEY_E;
+    int down_key     = GLFW_KEY_Q;
 
     void update_pressed_values(const p6::Context& ctx)
     {

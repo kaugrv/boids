@@ -5,8 +5,8 @@ void FreeCamera::updateFreeCamera(float delta_time, const Mouse& mouse, const Mo
     // rotation
     if (mouse.is_left_button_pressed)
     {
-        rotateLeft(mouse.delta.x * delta_time * 200.);
-        rotateUp(mouse.delta.y * delta_time * 200.);
+        rotateLeft(-mouse.delta.x * delta_time*500000.);
+        rotateUp(mouse.delta.y * delta_time*500000.);
     }
 
     // translation

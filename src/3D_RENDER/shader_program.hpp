@@ -52,6 +52,7 @@ template<typename T> // works for point and directionnal light
 void send_light(p6::Shader& shader, const std::vector<T>& list_light, const glm::mat4& view_mat, const bool& is_directionnal)
 {
     lightDatas lights_datas = fill_light_data(list_light, view_mat);
+    // std::cout << lights_datas.list_color.size << " // " << lights_datas.list_intensity.size << " // " << lights_datas.list_position_or_direction_view.size << "\n";
     if (is_directionnal)
     {
         send_light_dir_uniform(shader, lights_datas);
@@ -73,31 +74,31 @@ void send_light_pos_uniform(p6::Shader& shader, const lightDatas& light_datas)
     GLint  shader_id = shader.id();
     size_t nb_light  = light_datas.list_color.size();
 
-    GLuint uIncidentLight  = glad_glGetUniformLocation(shader_id, "uIncidentLight");
-    GLuint uLightColor     = glad_glGetUniformLocation(shader_id, "uLightColor");
-    GLuint uLightIntensity = glad_glGetUniformLocation(shader_id, "uLightIntensity");
+    GLuint w_i  = glad_glGetUniformLocation(shader_id, "w_i");
+    GLuint L_i     = glad_glGetUniformLocation(shader_id, "L_i");
+    GLuint intensity = glad_glGetUniformLocation(shader_id, "intensity");
 
     // actually set them
-    glUniform3fv(uIncidentLight, nb_light, (const GLfloat*)light_datas.position_or_direction_view.data());
-    glUniform3fv(uLightColor, nb_light, (const GLfloat*)light_datas.list_color.data());
-    glUniform1fv(uLightIntensity, nb_light, (const GLfloat*)light_datas.list_intensity.data());
-    shader.set("u_nb_light", nb_light);
+    glUniform3fv(w_i, nb_light, (const GLfloat*)light_datas.position_or_direction_view.data());
+    glUniform3fv(L_i, nb_light, (const GLfloat*)light_datas.list_color.data());
+    glUniform1fv(intensity, nb_light, (const GLfloat*)light_datas.list_intensity.data());
+    shader.set("nb_light", nb_light);
 }
 
-void send_light_dir_uniform(p6::Shader& shader, lightDatas light_datas)
+void send_light_dir_uniform(p6::Shader& shader, const lightDatas& light_datas)
 {
     GLint  shader_id = shader.id();
     size_t nb_light  = light_datas.list_color.size();
 
-    GLuint uDirectionLight          = glad_glGetUniformLocation(shader_id, "uDirectionLight");
-    GLuint uLightColor              = glad_glGetUniformLocation(shader_id, "uLightColor");
-    GLuint uDirectionLightIntensity = glad_glGetUniformLocation(shader_id, "uDirectionLightIntensity");
+    GLuint direction_i          = glad_glGetUniformLocation(shader_id, "direction_i");
+    GLuint L_i_direction              = glad_glGetUniformLocation(shader_id, "L_i_direction");
+    GLuint intensity_direction = glad_glGetUniformLocation(shader_id, "intensity_direction");
 
     // actually set them
-    glUniform3fv(uDirectionLight, nb_light, (const GLfloat*)light_datas.position_or_direction_view.data());
-    glUniform3fv(uLightColor, nb_light, (const GLfloat*)light_datas.list_color.data());
-    glUniform1fv(uDirectionLightIntensity, nb_light, (const GLfloat*)light_datas.list_intensity.data());
-    shader.set("u_nb_light", nb_light);
+    glUniform3fv(direction_i, nb_light, (const GLfloat*)light_datas.position_or_direction_view.data());
+    glUniform3fv(L_i_direction, nb_light, (const GLfloat*)light_datas.list_color.data());
+    glUniform1fv(intensity_direction, nb_light, (const GLfloat*)light_datas.list_intensity.data());
+    shader.set("nb_light_directionnal", nb_light);
 }
 
 glm::vec3 get_position_or_direction(PointLight light)
