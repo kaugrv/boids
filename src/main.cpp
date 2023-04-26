@@ -41,6 +41,8 @@
 #include "3D_RENDER/track_ball_camera.hpp"
 #include "3D_RENDER/renderer.hpp"
 
+// TODO : clean all includes
+
 int main(int argc, char* argv[])
 {
     { // Run the tests
@@ -57,7 +59,7 @@ int main(int argc, char* argv[])
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
 
-    // auto GUI = BoidGroupBehavior{};
+    auto GUI = BoidGroupBehavior{};
 
     // // Create group
     // BoidGroup group_of_boids(1);
@@ -91,23 +93,13 @@ int main(int argc, char* argv[])
     // SCENE
     Scene3D MainScene;
 
-    // Matrix init.
-    glm::mat4 Vmatrix = MainScene.m_trackBallCamera.getViewMatrix(); 
-    glm::mat4 ProjMatrix  = MainScene.m_trackBallCamera.getProjMatrix(ctx);
-
-    // Load shader
-    //p6::Shader blinnPhongProgram = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
-
-    // TODO : lights in Scene3D
     // Create lights
     DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
     PointLight point_light{.position = glm::vec3{1.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 1.5};
 
-    /// Push them into the list
-    std::vector<PointLight>       list_light;
-    std::vector<DirectionalLight> list_dir_light;
-    list_dir_light.push_back(dir_light);
-    list_light.push_back(point_light);
+    // Push them into the list
+    MainScene.add_dir_light(dir_light);
+    MainScene.add_point_light(point_light);
 
     // Material
     Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
@@ -127,9 +119,9 @@ int main(int argc, char* argv[])
     Mesh           mesh(sphr);
     Mesh mesh2(cone);
 
-    // Axis
-    // auto list_axis = generate_spherical_vector(10, 0.5);
-    // auto list_pos  = generate_spherical_vector(10, 2);
+    Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material, .m_position = glm::vec3(0.), .m_rotation = glm::vec3(90., 0., 0.)};
+    MainScene.add_boid(MYOBJECT);
+
 
     // Loop
     ctx.update = [&]() {
@@ -146,12 +138,12 @@ int main(int argc, char* argv[])
         // GUI Window
         //ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
-        // ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
-        // ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
-        // ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
-        // ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
-        // ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
-        // ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
+        ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
+        ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
+        ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
+        ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
+        ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
+        ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
         // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
         ImGui::End();
@@ -173,21 +165,8 @@ int main(int argc, char* argv[])
         // Shader
         material.shader.use();
 
-        // View Matrix
-        if (MainScene.freecam_is_used) {
-            Vmatrix = MainScene.m_freeCam.getViewMatrix();
-        }
-        else {
-            Vmatrix = MainScene.m_trackBallCamera.getViewMatrix();
-        }
-        
         // Model Matrix for the mesh
-        glm::mat4 M = glm::mat4(1.); 
-        glm::mat4 MVMatrix = Vmatrix * M;
-
-        set_blinn_phong(material, list_light, list_dir_light, MVMatrix, ProjMatrix);
-
-        draw3D(mesh2, glm::vec3(0.,0.,-5.), glm::vec3(0., 3.141592/2., 0.));
+        MainScene.drawScene(ctx);
 
         glBindVertexArray(0);
 
