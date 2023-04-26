@@ -96,8 +96,7 @@ int main(int argc, char* argv[])
     glm::mat4 ProjMatrix  = MainScene.m_trackBallCamera.getProjMatrix(ctx);
 
     // Load shader
-    p6::Shader blinnPhongProgram = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
-
+    //p6::Shader blinnPhongProgram = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
 
     // TODO : lights in Scene3D
     // Create lights
@@ -111,7 +110,7 @@ int main(int argc, char* argv[])
     list_light.push_back(point_light);
 
     // Material
-    Material material{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2.};
+    Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
 
     // Texture
     p6::Image moon_image = p6::load_image("../assets/models/MoonMap.jpg");
@@ -141,7 +140,8 @@ int main(int argc, char* argv[])
         // Input update
         keyboard.update_pressed_values(ctx);
         mouse.update_mouse(ctx);
-
+        
+        MainScene.update_cameras(mouse, keyboard, ctx.delta_time());
 
         // GUI Window
         //ImGui::ShowDemoWindow(); // Show the official ImGui demo window
@@ -170,27 +170,27 @@ int main(int argc, char* argv[])
         //     group_of_boids.reach_target(follow_mouse_factor, mouse_position);
         // me.draw(ctx);
 
+        // Shader
+        material.shader.use();
 
-
-        blinnPhongProgram.use(); // Shader
-
-        MainScene.update_cameras(mouse, keyboard, ctx.delta_time());
-
+        // View Matrix
         if (MainScene.freecam_is_used) {
             Vmatrix = MainScene.m_freeCam.getViewMatrix();
         }
         else {
             Vmatrix = MainScene.m_trackBallCamera.getViewMatrix();
         }
-
-        glm::mat4 M = glm::mat4(1.); // Model Matrix for the sphere
+        
+        // Model Matrix for the mesh
+        glm::mat4 M = glm::mat4(1.); 
         glm::mat4 MVMatrix = Vmatrix * M;
 
-        set_blinn_phong(blinnPhongProgram, material, list_light, list_dir_light, MVMatrix, ProjMatrix);
+        set_blinn_phong(material, list_light, list_dir_light, MVMatrix, ProjMatrix);
 
         draw3D(mesh2, glm::vec3(0.,0.,-5.), glm::vec3(0., 3.141592/2., 0.));
 
         glBindVertexArray(0);
+
     };
 
     ctx.maximize_window();
