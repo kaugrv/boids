@@ -1,16 +1,18 @@
 #pragma once
 
+#include "glimac/common.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "glimac_sphere/Sphere.hpp"
+#include "glimac/Sphere.hpp"
+#include "glimac/Cone.hpp"
 #include "p6/p6.h"
 
-void fill_vbo(GLuint& m_vbo, const glimac::Sphere& sphr)
+void fill_vbo(GLuint& m_vbo, const int& vertex_count, const glimac::ShapeVertex* shape_data_pointer)
 {
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-    glBufferData(GL_ARRAY_BUFFER, sphr.getVertexCount() * sizeof(glimac::ShapeVertex), sphr.getDataPointer(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glimac::ShapeVertex), shape_data_pointer, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -58,9 +60,17 @@ public:
     Mesh(const glimac::Sphere& sphr)
         : vertex_count(sphr.getVertexCount())
     {
-        fill_vbo(m_vbo, sphr);
+        fill_vbo(m_vbo,sphr.getVertexCount(), sphr.getDataPointer());
         setup_vao(m_vao, m_vbo);
     }
+
+    Mesh(const glimac::Cone& cone)
+        : vertex_count(cone.getVertexCount())
+    {
+        fill_vbo(m_vbo, cone.getVertexCount(), cone.getDataPointer());
+        setup_vao(m_vao, m_vbo);
+    }
+
     GLuint get_vao()
     {
         return m_vao;

@@ -1,5 +1,6 @@
 // #include <winuser.h>
 // BOIDS INCLUDE
+#include "BOIDS/Scene.hpp"
 #include "BOIDS/Sdf.hpp"
 #include "glm/matrix.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
@@ -38,6 +39,7 @@
 #include "3D_RENDER/random_sphere.hpp"
 #include "3D_RENDER/shader_program.hpp"
 #include "3D_RENDER/track_ball_camera.hpp"
+#include "3D_RENDER/renderer.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -86,21 +88,18 @@ int main(int argc, char* argv[])
     MovementInput keyboard = MovementInput{};
     Mouse mouse = Mouse{};
 
-    // Cameras
-    TrackballCamera trackBallCamera = TrackballCamera(-5, 0, 0);
-    FreeCamera      freeCam         = FreeCamera();
-
-    bool freecam_is_used = false; // false for trackball, true for freecam
+    // SCENE
+    Scene3D MainScene;
 
     // Matrix init.
-    glm::mat4 Vmatrix = trackBallCamera.getViewMatrix(); 
-    glm::mat4 ProjMatrix  = glm::perspective<float>(glm::radians(70.f), ctx.aspect_ratio(), 0.1f, 100.f);
-    glm::mat4 MVMatrix = glm::translate(glm::mat4(1.), glm::vec3(0., 0., -5.));
+    glm::mat4 Vmatrix = MainScene.m_trackBallCamera.getViewMatrix(); 
+    glm::mat4 ProjMatrix  = MainScene.m_trackBallCamera.getProjMatrix(ctx);
 
     // Load shader
     p6::Shader blinnPhongProgram = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
 
 
+    // TODO : lights in Scene3D
     // Create lights
     DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
     PointLight point_light{.position = glm::vec3{1.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 1.5};
@@ -119,12 +118,15 @@ int main(int argc, char* argv[])
 
     // GL options
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
 
     // Mesh 
     glimac::Sphere sphr(1, 16, 32);
+    glimac::Cone cone(1, 1, 16, 32);
+
     Mesh           mesh(sphr);
+    Mesh mesh2(cone);
 
     // Axis
     // auto list_axis = generate_spherical_vector(10, 0.5);
@@ -151,7 +153,7 @@ int main(int argc, char* argv[])
         // ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
         // ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
         // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
-        ImGui::Checkbox("Use Free Camera", &freecam_is_used);
+        ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
         ImGui::End();
 
 
@@ -168,27 +170,26 @@ int main(int argc, char* argv[])
         //     group_of_boids.reach_target(follow_mouse_factor, mouse_position);
         // me.draw(ctx);
 
-        glBindVertexArray(mesh.get_vao());
-        blinnPhongProgram.use();
 
-        trackBallCamera.updateTrackBallCamera(mouse.delta, mouse.is_left_button_pressed, mouse.is_right_button_pressed);
-        freeCam.updateFreeCamera(ctx.delta_time(), mouse, keyboard);
 
-        if (freecam_is_used) {
-            Vmatrix = freeCam.getViewMatrix();
+        blinnPhongProgram.use(); // Shader
+
+        MainScene.update_cameras(mouse, keyboard, ctx.delta_time());
+
+        if (MainScene.freecam_is_used) {
+            Vmatrix = MainScene.m_freeCam.getViewMatrix();
         }
         else {
-            Vmatrix = trackBallCamera.getViewMatrix();
+            Vmatrix = MainScene.m_trackBallCamera.getViewMatrix();
         }
 
         glm::mat4 M = glm::mat4(1.); // Model Matrix for the sphere
-        MVMatrix = Vmatrix * M;
+        glm::mat4 MVMatrix = Vmatrix * M;
 
         set_blinn_phong(blinnPhongProgram, material, list_light, list_dir_light, MVMatrix, ProjMatrix);
 
-        // glActiveTexture(GL_TEXTURE0);
-        glDrawArrays(GL_TRIANGLES, 0, mesh.get_vertex_count());
-        // glBindTexture(GL_TEXTURE_2D, 0);
+        draw3D(mesh2, glm::vec3(0.,0.,-5.), glm::vec3(0., 3.141592/2., 0.));
+
         glBindVertexArray(0);
     };
 

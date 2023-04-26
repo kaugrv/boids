@@ -9,7 +9,7 @@
 #include "glm/gtc/random.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "glimac_sphere/Sphere.hpp"
+#include "glimac/Sphere.hpp"
 #include "glm/gtx/transform.hpp"
 
 std::vector<glm::vec3>

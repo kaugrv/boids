@@ -16,13 +16,19 @@
 
 class FreeCamera {
 
-public:
+private:
   glm::vec3 m_Position;
   float m_fPhi;
   float m_fTheta;
   glm::vec3 m_FrontVector;
   glm::vec3 m_LeftVector;
   glm::vec3 m_UpVector;
+  
+  float m_fov = glm::radians(70.f);
+  float m_near = 0.1f;
+  float m_far = 100.f;
+
+public:
 
   void computeDirectionVectors() {
     m_FrontVector =
@@ -53,4 +59,9 @@ public:
   }
 
   void updateFreeCamera(float delta_time, const Mouse& mouse, const MovementInput& keyboard);
+    
+  glm::mat4 getProjMatrix(const p6::Context& ctx) {
+        return glm::perspective<float>(m_fov, ctx.aspect_ratio(), m_near, m_far);
+    }
+
 };
