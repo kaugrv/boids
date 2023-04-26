@@ -54,8 +54,6 @@ struct Scene3D {
     // Objects in the scene
     ObjectsInScene m_objects_in_scene;
 
-
-
     // Constructor
     Scene3D() : m_trackBallCamera(-5, 0, 0), m_freeCam() {};
 

@@ -13,13 +13,6 @@ public:
     Scene()  = default;
     ~Scene() = default;
 
-    void draw(p6::Context& ctx)
-    {
-        for (auto& obstacle : m_Obstacles)
-        {
-            obstacle->draw(ctx);
-        }
-    }
 
     auto get_obstacles() const
     {

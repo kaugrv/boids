@@ -12,7 +12,6 @@
 #include <vector>
 #include "BOIDS/Boid.hpp"
 #include "BOIDS/BoidGroup.hpp"
-#include "BOIDS/Surveyor.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 

@@ -5,9 +5,13 @@
 #include "Scene.hpp"
 #include "p6/p6.h"
 
+glm::vec3 random_vec3(float min, float max) {
+    return glm::vec3(p6::random::number(min, max), p6::random::number(min, max), p6::random::number(min, max));
+}
+
 static Boid generate_random_boid()
 {
-    return Boid(glm::vec2(p6::random::number(-0.9f, 0.9f), p6::random::number(-0.9f, 0.9f)), p6::random::number(-0.5f, 0.5f), p6::random::number(0.f, 2.f * p6::PI), 0.02f);
+    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-0.5f, 0.5f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
 struct BoidGroupBehavior {
@@ -47,24 +51,25 @@ public:
 
         for (auto& other_boid : m_boids)
         {
-            const float dist = glm::distance(boid.position(), other_boid.position());
+            const float dist = glm::distance(boid.m_position, other_boid.m_position);
             if (dist <= m_behavior.m_radius && &other_boid != &boid)
                 neighbours_boids.push_back(other_boid);
         }
         return neighbours_boids;
     }
 
-    glm::vec2 cohesion(const Boid& boid) // return the average direction to all the neighbours
+    // Cohesion, Seperation & Alignment return the average direction to all the neighbours
+    glm::vec3 cohesion(const Boid& boid) 
     {
         if (get_neighbours(boid).empty())
-            return glm::vec2(0);
+            return glm::vec3(0);
 
-        auto         cohesion_vector = glm::vec2(0);
+        auto         cohesion_vector = glm::vec3(0);
         unsigned int neighbour_count = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
-            glm::vec2 difference = neighbour.position() - boid.position();
+            glm::vec3 difference = neighbour.m_position - boid.m_position;
             neighbour_count++;
             cohesion_vector += difference;
         }
@@ -72,20 +77,20 @@ public:
         return glm::normalize(cohesion_vector / static_cast<float>(neighbour_count)) * m_behavior.m_cohesion;
     }
 
-    glm::vec2 separation(const Boid& boid) // return the average direction to all the neighbours
+    glm::vec3 separation(const Boid& boid) 
     {
         if (get_neighbours(boid).empty())
-            return glm::vec2(0);
+            return glm::vec3(0);
 
-        auto         separation_vector = glm::vec2(0);
+        auto         separation_vector = glm::vec3(0);
         unsigned int neighbour_count   = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
-            float     dist = glm::distance(boid.position(), neighbour.position());
-            glm::vec2 difference{0};
+            float     dist = glm::distance(boid.m_position, neighbour.m_position);
+            glm::vec3 difference{0};
             if (dist != 0)
-                difference = -(neighbour.position() - boid.position()) / (dist * dist);
+                difference = -(neighbour.m_position - boid.m_position) / (dist * dist);
             neighbour_count++;
             separation_vector += difference;
         }
@@ -93,21 +98,53 @@ public:
         return glm::normalize(separation_vector / static_cast<float>(neighbour_count)) * m_behavior.m_separation;
     }
 
-    glm::vec2 alignment(const Boid& boid) // return the average direction to all the neighbours
+    glm::vec3 alignment(const Boid& boid) 
     {
         if (get_neighbours(boid).empty())
-            return glm::vec2(0);
+            return glm::vec3(0);
 
-        auto         alignment_vector = glm::vec2(0);
+        auto         alignment_vector = glm::vec3(0);
         unsigned int neighbour_count  = 0;
 
         for (auto& neighbour : get_neighbours(boid))
         {
             neighbour_count++;
-            alignment_vector += neighbour.velocity();
+            alignment_vector += neighbour.m_velocity;
         }
 
         return glm::normalize(alignment_vector / static_cast<float>(neighbour_count)) * m_behavior.m_alignment;
+    }
+
+    void avoid_obstacle(Boid& boid, const Obstacle& obstacle, float delta_time)
+    {
+        if (obstacle.is_bounded())
+        {
+            const float dist = obstacle.get_distance(boid.m_position);
+            if (std::fabs(dist) >= 0.2)
+            {
+                return;
+            }
+
+            const glm::vec3 normal = obstacle.get_normal(boid.m_position);
+
+            boid.m_velocity += delta_time * normal / dist;
+
+            boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
+        }
+        else
+        {
+            const float abs_dist = std::fabs(obstacle.get_distance(boid.m_position));
+            if (abs_dist >= 0.2)
+            {
+                return;
+            }
+
+            const glm::vec3 normal = obstacle.get_normal( boid.m_position);
+
+            boid.m_velocity += delta_time * normal / abs_dist;
+
+            boid.m_velocity = glm::normalize(boid.m_velocity) *  boid.m_speed;
+        }
     }
 
     void update_behavior(BoidGroupBehavior gui)
@@ -133,50 +170,25 @@ public:
 
         for (auto& boid : m_boids)
         {
-            boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.direction());
+            boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.m_direction);
 
             // Check collisions with all obstacles of the scene (including bounds)
             for (auto const& obstacle : *scene.get_obstacles())
             {
-                boid.avoid_obstacle(*obstacle, delta_time);
+                avoid_obstacle(boid, *obstacle, delta_time);
             }
 
             boid.update_position(delta_time);
         }
     }
 
-    void draw_boids(p6::Context& ctx)
-    {
-        for (auto& boid : m_boids)
-            boid.draw(ctx);
-        draw_visual_range(ctx);
-    }
-
-    void draw_visual_range(p6::Context& ctx)
-    {
-        if (m_behavior.m_display_visual_range)
-        {
-            for (auto& boid : m_boids)
-            {
-                ctx.stroke_weight = 0.;
-                ctx.fill          = {1.f, 1.f, 1.f, 0.1f};
-                ctx.circle(
-                    p6::Center{
-                        boid.x(), boid.y()},
-                    p6::Radius{
-                        m_behavior.m_radius}
-                );
-            }
-        }
-    }
-
-    void reach_target(const float& follow_factor, const glm::vec2& target_position)
+    void reach_target(const float& follow_factor, const glm::vec3& target_position)
     {
         for (auto& boid : m_boids)
         {
-            glm::vec2 dir = glm::normalize(target_position - boid.position());
+            glm::vec3 dir = glm::normalize(target_position - boid.m_position);
 
-            boid.set_direction(boid.direction() * (1 - follow_factor) + dir * follow_factor);
+            boid.set_direction(boid.m_position * (1 - follow_factor) + dir * follow_factor);
         }
     }
 
