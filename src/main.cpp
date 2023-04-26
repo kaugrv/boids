@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     // Surveyor me;
     // float    follow_mouse_factor = 0.;
 
-    // 3D STUFF
+    // TO DO : MovementInput has keyboard and mouse
     MovementInput keyboard = MovementInput{};
     Mouse mouse = Mouse{};
 
@@ -97,12 +97,9 @@ int main(int argc, char* argv[])
     DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
     PointLight point_light{.position = glm::vec3{1.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 1.5};
 
-    // Push them into the list
+    // Push them into the scene
     MainScene.add_dir_light(dir_light);
     MainScene.add_point_light(point_light);
-
-    // Material
-    Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
 
     // Texture
     p6::Image moon_image = p6::load_image("../assets/models/MoonMap.jpg");
@@ -112,13 +109,11 @@ int main(int argc, char* argv[])
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
 
-    // Mesh 
+    // My Object
     glimac::Sphere sphr(1, 16, 32);
     glimac::Cone cone(1, 1, 16, 32);
-
-    Mesh           mesh(sphr);
     Mesh mesh2(cone);
-
+    Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
     Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material, .m_position = glm::vec3(0.), .m_rotation = glm::vec3(90., 0., 0.)};
     MainScene.add_boid(MYOBJECT);
 
@@ -133,6 +128,7 @@ int main(int argc, char* argv[])
         keyboard.update_pressed_values(ctx);
         mouse.update_mouse(ctx);
         
+        // Camera Update
         MainScene.update_cameras(mouse, keyboard, ctx.delta_time());
 
         // GUI Window
@@ -162,18 +158,13 @@ int main(int argc, char* argv[])
         //     group_of_boids.reach_target(follow_mouse_factor, mouse_position);
         // me.draw(ctx);
 
-        // Shader
-        material.shader.use();
 
-        // Model Matrix for the mesh
         MainScene.drawScene(ctx);
 
-        glBindVertexArray(0);
 
     };
 
     ctx.maximize_window();
-
-    // Should be done last. It starts the infinite loop.
     ctx.start();
+
 };

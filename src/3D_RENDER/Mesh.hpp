@@ -88,4 +88,5 @@ public:
 void drawMesh(Mesh &mesh) {
     glBindVertexArray(mesh.get_vao()); // Bind Mesh
     glDrawArrays(GL_TRIANGLES, 0, mesh.get_vertex_count());
+    glBindVertexArray(0);
 }
