@@ -2,6 +2,7 @@
 // BOIDS INCLUDE
 #include "BOIDS/Scene.hpp"
 #include "BOIDS/Sdf.hpp"
+#include "glimac/Sphere.hpp"
 #include "glm/matrix.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
@@ -58,27 +59,8 @@ int main(int argc, char* argv[])
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
 
-    auto GUI = BoidGroupBehavior{};
 
-    // Create group
-    Boid3DGroup group_of_boids(10);
-
-
-    // Box                 bounds{glm::vec2(0.), glm::vec2(1.), true};
-    // Box                 box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
-    // Circle              circle(glm::vec2(0.5f, 0.5f), 0.1f);
-    // Circle              circle2(glm::vec2(-0.5f, 0.5f), 0.1f);
-    // Circle              circle3(glm::vec2(-0.5f, -0.5f), 0.1f);
-    // Circle              circle4(glm::vec2(0.5f, -0.5f), 0.1f);
-    // EquilateralTriangle triangle(glm::vec2(0.f, 0.3f), 0.2f);
-
-    // MainScene.add_obstacle(new Box(bounds));
     // MainScene.add_obstacle(new Box(box));
-    // MainScene.add_obstacle(new Circle(circle));
-    // MainScene.add_obstacle(new Circle(circle2));
-    // MainScene.add_obstacle(new Circle(circle3));
-    // MainScene.add_obstacle(new Circle(circle4));
-    // MainScene.add_obstacle(new EquilateralTriangle(triangle));
 
     // Surveyor me;
     // float    follow_mouse_factor = 0.;
@@ -92,7 +74,7 @@ int main(int argc, char* argv[])
 
     // Create lights
     DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
-    PointLight point_light{.position = glm::vec3{1.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 1.5};
+    PointLight point_light{.position = glm::vec3{0.2}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 3.};
 
     // Push them into the scene
     MainScene.add_dir_light(dir_light);
@@ -107,14 +89,26 @@ int main(int argc, char* argv[])
     // glCullFace(GL_BACK);
 
     // My Object
-    glimac::Sphere sphr(1, 16, 32);
-    glimac::Cone cone(1, 1, 16, 32);
+    
+    glimac::Cone cone(0.5, 0.3, 16, 32);
     Mesh mesh2(cone);
     Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
-    
-    Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material, .m_position = glm::vec3(0.), .m_rotation = glm::vec3(90., 0., 0.)};
-    MainScene.add_boid(MYOBJECT);
+    Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material};
 
+    glimac::Sphere sphr(2., 16, 32);
+    Mesh mesh(sphr);
+    Material materialSphere{glm::vec3(0.1, 0.1, 0.), glm::vec3(0.5), glm::vec3(0.5), 2.};
+    Object3D BOUND {.m_mesh = mesh, .m_material = &materialSphere};
+
+    auto GUI = BoidGroupParameters{};
+
+    // Create group
+    BoidGroup group_of_boids(10);
+    MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
+
+    Sphere                 bounds{glm::vec3(0.), (2.), true};
+    MainScene.add_obstacle(new Sphere(bounds));
+    
 
     // Loop
     ctx.update = [&]() {
@@ -142,19 +136,13 @@ int main(int argc, char* argv[])
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
         ImGui::End();
 
-
-        group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
-        group_of_boids.update_all_boids(ctx.delta_time()); // Update all boids of the group
-
-
-        // me.update_surveyor_position(ctx);
-
-        // if (ctx.mouse_button_is_pressed(p6::Button::Left))
-        //     group_of_boids.reach_target(follow_mouse_factor, mouse_position);
-        // me.draw(ctx);
+        MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
+        MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
+        MainScene.drawScene(ctx, MYOBJECT, BOUND);
 
 
-        MainScene.drawScene(ctx);
+        std::cout << MainScene.m_objects_in_scene.m_group_of_boids.m_boids[0].m_velocity.x << std::endl;
+        std::cout << MainScene.m_objects_in_scene.m_group_of_boids.m_boids[0].m_velocity.y << std::endl;
 
 
     };

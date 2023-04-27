@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "Boid.hpp"
 #include "Scene.hpp"
 #include "p6/p6.h"
@@ -11,24 +12,26 @@ glm::vec3 random_vec3(float min, float max) {
 
 static Boid generate_random_boid()
 {
-    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-0.5f, 0.5f), glm::normalize(random_vec3(-1.f, 1.f)));
+    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-20.f, 20.f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
-struct BoidGroupBehavior {
-    float m_cohesion{0.5};
-    float m_separation{0.5};
-    float m_alignment{0.5};
-    float m_radius{0.25};
-    int   m_boid_nb{20};
+struct BoidGroupParameters {
+    float m_cohesion{1.};
+    float m_separation{0.};
+    float m_alignment{0.};
+    float m_radius{20.};
+    int   m_boid_nb{2};
     bool  m_display_visual_range{false};
 };
 
 class BoidGroup {
 private:
-    std::vector<Boid> m_boids{};
-    BoidGroupBehavior m_behavior{};
+    BoidGroupParameters m_behavior{};
 
 public:
+    std::vector<Boid> m_boids{};
+
+    BoidGroup() = default;
     BoidGroup(const Boid& base_boid, const unsigned int& boid_number)
     {
         for (unsigned int i = 0; i < boid_number; i++)
@@ -120,21 +123,21 @@ public:
         if (obstacle.is_bounded())
         {
             const float dist = obstacle.get_distance(boid.m_position);
-            if (std::fabs(dist) >= 0.2)
+            if (std::fabs(dist) >= 3.)
             {
                 return;
             }
 
             const glm::vec3 normal = obstacle.get_normal(boid.m_position);
 
-            boid.m_velocity += delta_time * normal / dist;
+            boid.m_velocity += 200*delta_time * normal / dist;
 
             boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
         }
         else
         {
             const float abs_dist = std::fabs(obstacle.get_distance(boid.m_position));
-            if (abs_dist >= 0.2)
+            if (abs_dist >= 3.)
             {
                 return;
             }
@@ -147,7 +150,7 @@ public:
         }
     }
 
-    void update_behavior(BoidGroupBehavior gui)
+    void update_behavior(BoidGroupParameters gui)
     {
         m_behavior = gui;
     }
@@ -164,16 +167,18 @@ public:
         }
     }
 
-    void update_all_boids(const float& delta_time, const Scene& scene)
+    void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles)
     {
         update_boid_number();
 
         for (auto& boid : m_boids)
         {
             boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.m_direction);
+            std::cout << cohesion(boid).x << cohesion(boid).y  << cohesion(boid).z << std::endl;
+            
 
             // Check collisions with all obstacles of the scene (including bounds)
-            for (auto const& obstacle : *scene.get_obstacles())
+            for (auto const& obstacle : obstacles)
             {
                 avoid_obstacle(boid, *obstacle, delta_time);
             }

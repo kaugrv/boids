@@ -11,35 +11,14 @@
 #include <vector> 
 #include "light.hpp"
 #include "shader_program.hpp"
+#include "Object3D.hpp"
+#include "./BOIDS/BoidGroup.hpp"
+#include "./BOIDS/Sdf.hpp"
 
-struct Object3D {
-    Mesh m_mesh{};
-    Material* m_material{};
-
-    glm::vec3 m_position{};
-    glm::vec3 m_rotation{};
-    glm::vec3 m_scale{1.};
-
-    glm::mat4 getModelMatrix() {
-        glm::mat4 ModelMatrix(1.);
-        ModelMatrix = glm::translate(ModelMatrix, m_position);
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.x), glm::vec3(1.,0.,0.));
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.y), glm::vec3(0.,1.,0.));
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.z), glm::vec3(0.,0.,1.));
-        ModelMatrix = glm::scale(ModelMatrix, m_scale);
-
-        return ModelMatrix;
-        
-    }
-};
 
 
 struct ObjectsInScene {
-    std::vector<Boids> m_boids{};
-    // Object3D m_surveyor{};
-    // std::vector<Object3D> m_obstacles{};
-
-
+    BoidGroup m_group_of_boids{};
 };
 
 struct Scene3D {
@@ -54,7 +33,10 @@ struct Scene3D {
     std::vector<DirectionalLight> m_list_dir_light;
 
     // Objects in the scene
-    ObjectsInScene m_objects_in_scene;
+    ObjectsInScene m_objects_in_scene{};
+
+    std::vector<std::unique_ptr<Obstacle>> m_Obstacles{};
+
 
     // Constructor
     Scene3D() : m_trackBallCamera(-5, 0, 0), m_freeCam() {};
@@ -82,19 +64,42 @@ struct Scene3D {
     }
     
     void add_boid(const Boid& boid) {
-        m_objects_in_scene.m_boids.push_back(boid);
+        m_objects_in_scene.m_group_of_boids.add_boid(boid);
+    }
+
+    auto get_obstacles() const
+    {
+        return &m_Obstacles;
+    }
+
+    void add_obstacle(Obstacle* obstacle_ptr)
+    {
+        if (obstacle_ptr != nullptr)
+            m_Obstacles.push_back(std::unique_ptr<Obstacle>(obstacle_ptr));
+    }
+
+    void remove_obstacle()
+    {
+        m_Obstacles.pop_back();
     }
 
 
-    void drawScene(const p6::Context& ctx) {
+    void drawScene(const p6::Context& ctx, Object3D& object, Object3D& bound_box) {
 
-        for (auto& boid : m_objects_in_scene.m_boids) {
-            
-            boid.m_material->shader.use();
+        for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids) {
+            object.m_material->shader.use();
             glm::mat4 MVMatrix = getViewMatrix() * boid.getModelMatrix();
-            set_blinn_phong(*boid.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-            drawMesh(boid.m_mesh);
+            set_blinn_phong(*object.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+            drawMesh(object.m_mesh);
         }
+
+        for (auto&& obstacle : m_Obstacles) {
+            bound_box.m_material->shader.use();
+            glm::mat4 MVMatrix = getViewMatrix() *glm::mat4(1.);
+            set_blinn_phong(*bound_box.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+            drawMesh(bound_box.m_mesh);
+        }
+
     }
 };
 
