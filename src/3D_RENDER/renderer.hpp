@@ -1,3 +1,4 @@
+#pragma once
 
 #include <vector>
 #include "3D_RENDER/light.hpp"
@@ -12,11 +13,11 @@
 #include "shader_program.hpp"
 
 struct Object3D {
-    Mesh m_mesh;
-    Material* m_material;
+    Mesh m_mesh{};
+    Material* m_material{};
 
-    glm::vec3 m_position;
-    glm::vec3 m_rotation;
+    glm::vec3 m_position{};
+    glm::vec3 m_rotation{};
     glm::vec3 m_scale{1.};
 
     glm::mat4 getModelMatrix() {
@@ -32,8 +33,9 @@ struct Object3D {
     }
 };
 
+
 struct ObjectsInScene {
-    std::vector<Object3D> m_boids{};
+    std::vector<Boids> m_boids{};
     // Object3D m_surveyor{};
     // std::vector<Object3D> m_obstacles{};
 
@@ -79,8 +81,8 @@ struct Scene3D {
         m_list_dir_light.push_back(dir_light);
     }
     
-    void add_boid(const Object3D& object) {
-        m_objects_in_scene.m_boids.push_back(object);
+    void add_boid(const Boid& boid) {
+        m_objects_in_scene.m_boids.push_back(boid);
     }
 
 

@@ -60,11 +60,9 @@ int main(int argc, char* argv[])
 
     auto GUI = BoidGroupBehavior{};
 
-    // // Create group
-    // BoidGroup group_of_boids(1);
+    // Create group
+    Boid3DGroup group_of_boids(10);
 
-    // // Create scene
-    // Scene MainScene;
 
     // Box                 bounds{glm::vec2(0.), glm::vec2(1.), true};
     // Box                 box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
@@ -113,6 +111,7 @@ int main(int argc, char* argv[])
     glimac::Cone cone(1, 1, 16, 32);
     Mesh mesh2(cone);
     Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
+    
     Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material, .m_position = glm::vec3(0.), .m_rotation = glm::vec3(90., 0., 0.)};
     MainScene.add_boid(MYOBJECT);
 
@@ -144,12 +143,9 @@ int main(int argc, char* argv[])
         ImGui::End();
 
 
-        // Boid Scene
-        // MainScene.draw(ctx);
+        group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
+        group_of_boids.update_all_boids(ctx.delta_time()); // Update all boids of the group
 
-        // group_of_boids.update_behavior(GUI);                          // Retrieve GUI slider and button changes
-        // group_of_boids.update_all_boids(ctx.delta_time(), MainScene); // Update all boids of the group
-        // group_of_boids.draw_boids(ctx);
 
         // me.update_surveyor_position(ctx);
 
