@@ -1,18 +1,15 @@
 #pragma once
 
 #include <vector>
-
 #include "Boid.hpp"
-#include "Scene.hpp"
 #include "p6/p6.h"
 
 glm::vec3 random_vec3(float min, float max) {
     return glm::vec3(p6::random::number(min, max), p6::random::number(min, max), p6::random::number(min, max));
 }
 
-static Boid generate_random_boid()
-{
-    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-20.f, 20.f), glm::normalize(random_vec3(-1.f, 1.f)));
+static Boid generate_random_boid() {
+    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-5.f, 5.f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
 struct BoidGroupParameters {

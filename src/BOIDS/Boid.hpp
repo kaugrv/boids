@@ -14,7 +14,6 @@ struct Boid {
 
     // Constructors
     Boid() = default;
-
     explicit Boid(const glm::vec3& position, const float& speed, const glm::vec3& direction = glm::vec3(0., -1., 0.)) // NOLINT
         : m_position(position), m_velocity(direction*speed), m_direction(direction),  m_speed(speed){};
 
@@ -29,23 +28,19 @@ struct Boid {
         m_speed    = glm::length(m_velocity);
     }
 
-    void set_speed(const float& speed)
-    {
+    void set_speed(const float& speed) {
         m_speed    = speed;
         m_velocity = glm::normalize(m_velocity) * speed;
     }
 
-    void set_direction(const glm::vec3& direction)
-    {
+    void set_direction(const glm::vec3& direction) {
         m_direction = direction;
         set_velocity(glm::normalize(direction) * m_speed);
     }
 
-    void update_position(float delta_time)
-    {
+    void update_position(float delta_time) {
         m_position += delta_time * m_velocity;
     }
-
     
     glm::mat4 getModelMatrix() {
         glm::mat4 ModelMatrix(1.);
@@ -54,10 +49,6 @@ struct Boid {
         ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.y), glm::vec3(0.,1.,0.));
         ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.z), glm::vec3(0.,0.,1.));
         ModelMatrix = glm::scale(ModelMatrix, m_scale);
-
         return ModelMatrix;
-        
     }
-
-
 };

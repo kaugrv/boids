@@ -1,6 +1,5 @@
 // #include <winuser.h>
 // BOIDS INCLUDE
-#include "BOIDS/Scene.hpp"
 #include "BOIDS/Sdf.hpp"
 #include "glimac/Sphere.hpp"
 #include "glm/matrix.hpp"
@@ -41,7 +40,7 @@
 #include "3D_RENDER/track_ball_camera.hpp"
 #include "3D_RENDER/renderer.hpp"
 
-// TODO : clean all includes
+// TO DO : clean all includes
 
 int main(int argc, char* argv[])
 {
@@ -58,7 +57,6 @@ int main(int argc, char* argv[])
 
     // Actual app
     auto ctx = p6::Context{{.title = "Boids"}};
-
 
     // MainScene.add_obstacle(new Box(box));
 
@@ -88,27 +86,24 @@ int main(int argc, char* argv[])
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
 
-    // My Object
-    
+    // Boid Object
     glimac::Cone cone(0.5, 0.3, 16, 32);
     Mesh mesh2(cone);
     Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
     Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material};
-
-    glimac::Sphere sphr(2., 16, 32);
-    Mesh mesh(sphr);
-    Material materialSphere{glm::vec3(0.1, 0.1, 0.), glm::vec3(0.5), glm::vec3(0.5), 2.};
-    Object3D BOUND {.m_mesh = mesh, .m_material = &materialSphere};
-
-    auto GUI = BoidGroupParameters{};
-
+    
     // Create group
+    auto GUI = BoidGroupParameters{};
     BoidGroup group_of_boids(10);
     MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
 
-    Sphere                 bounds{glm::vec3(0.), (2.), true};
+    // Bounding Box Object
+    glimac::Sphere sphr(5., 16, 32);
+    Mesh mesh(sphr);
+    Material materialSphere{glm::vec3(0.1, 0.1, 0.), glm::vec3(0.5), glm::vec3(0.5), 2.};
+    Object3D BOUND {.m_mesh = mesh, .m_material = &materialSphere};
+    Sphere                 bounds{glm::vec3(0.), (5.), true};
     MainScene.add_obstacle(new Sphere(bounds));
-    
 
     // Loop
     ctx.update = [&]() {
@@ -123,7 +118,7 @@ int main(int argc, char* argv[])
         // Camera Update
         MainScene.update_cameras(mouse, keyboard, ctx.delta_time());
 
-        // GUI Window
+        // TO DO : GUI Window in Function
         //ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
         ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
@@ -138,13 +133,7 @@ int main(int argc, char* argv[])
 
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
-        MainScene.drawScene(ctx, MYOBJECT, BOUND);
-
-
-        std::cout << MainScene.m_objects_in_scene.m_group_of_boids.m_boids[0].m_velocity.x << std::endl;
-        std::cout << MainScene.m_objects_in_scene.m_group_of_boids.m_boids[0].m_velocity.y << std::endl;
-
-
+        MainScene.drawScene(ctx, MYOBJECT);
     };
 
     ctx.maximize_window();
