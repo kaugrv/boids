@@ -3,32 +3,39 @@
 
 
 S4 IMAC Project.  
-C++ et Synthèses d'images  
 Wendy Gervais & Tristan Debeaune  
 
-# GUI
+# 3D Version
+
+## GUI
 - [ ] Dear ImGui  
 
-# Boids
+##  Boids
 - [ ] Original 3D modelisation  
 - [ ] LODs
 
-# Environment
+##  Environment
 - [ ] Textured cube  
 - [ ] Textured decor elements  
 
-# Surveyor
+##  Surveyor
 - [ ] Original 3D modelisation  
 - [ ] 3rd person  
 - [ ] Ponctual Light
 
-# Lights
+## Lights
 - [ ] > 2, one on the surveyor  
 - [ ] One must generate shadows
 
-# Bonus
+##  Bonus
 - [ ] Complexe illumination model  
 - [ ] Day / Night cycle  
 - [ ] VFX : particles, fog, bloom...  
 - [ ] Animated surveyor
+
+
+
+
+# 2D Version
+![ezgif-1-5852058854](https://user-images.githubusercontent.com/103901906/235307095-df4c120e-69c1-47f6-a79e-77da17cbc735.gif)
 
