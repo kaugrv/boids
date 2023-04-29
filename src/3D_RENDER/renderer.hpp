@@ -84,7 +84,7 @@ struct Scene3D {
     }
 
 
-    void drawScene(const p6::Context& ctx, Object3D& object) {
+    void drawScene(const p6::Context& ctx, Object3D& object, Object3D &bound_box) {
 
         for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids) {
             object.m_material->shader.use();
@@ -92,6 +92,11 @@ struct Scene3D {
             set_blinn_phong(*object.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
             drawMesh(object.m_mesh);
         }
+
+        bound_box.m_material->shader.use();
+        glm::mat4 MVMatrix = getViewMatrix() * glm::mat4(1.);
+        set_blinn_phong(*bound_box.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(bound_box.m_mesh);
 
 
     }

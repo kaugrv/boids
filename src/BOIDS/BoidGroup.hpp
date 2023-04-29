@@ -9,7 +9,7 @@ glm::vec3 random_vec3(float min, float max) {
 }
 
 static Boid generate_random_boid() {
-    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-5.f, 5.f), glm::normalize(random_vec3(-1.f, 1.f)));
+    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(1.f, 1.f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
 struct BoidGroupParameters {
@@ -115,19 +115,19 @@ public:
         return glm::normalize(alignment_vector / static_cast<float>(neighbour_count)) * m_behavior.m_alignment;
     }
 
-    void avoid_obstacle(Boid& boid, const Obstacle& obstacle, float delta_time)
+    void avoid_obstacle(Boid& boid, const Obstacle& obstacle, float delta_time, float& avoid_distance, float& avoid_strength)
     {
         if (obstacle.is_bounded())
         {
             const float dist = obstacle.get_distance(boid.m_position);
-            if (std::fabs(dist) >= 3.)
+            if (std::fabs(dist) >= avoid_distance)
             {
                 return;
             }
 
             const glm::vec3 normal = obstacle.get_normal(boid.m_position);
 
-            boid.m_velocity += 200*delta_time * normal / dist;
+            boid.m_velocity += avoid_strength*delta_time * normal / dist;
 
             boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
         }
@@ -164,7 +164,7 @@ public:
         }
     }
 
-    void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles)
+    void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles, float& avoid_distance, float& avoid_strength)
     {
         update_boid_number();
 
@@ -177,7 +177,7 @@ public:
             // Check collisions with all obstacles of the scene (including bounds)
             for (auto const& obstacle : obstacles)
             {
-                avoid_obstacle(boid, *obstacle, delta_time);
+                avoid_obstacle(boid, *obstacle, delta_time, avoid_distance, avoid_strength);
             }
 
             boid.update_position(delta_time);
