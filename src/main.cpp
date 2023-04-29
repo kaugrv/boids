@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
     tinyobj::LoadObj(car_shapes, car_materials, "..\\assets\\models\\peugeot.obj", "..\\assets\\models\\peugeot.mtl");
 
     Mesh car(car_shapes);
+    //Material car_material(car_materials[0]);
     Object3D car_object {.m_mesh = car, .m_material = &material};
 
 

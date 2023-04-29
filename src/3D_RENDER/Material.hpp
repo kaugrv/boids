@@ -29,7 +29,10 @@ struct Material {
     Material(glm::vec3 diffuse, glm::vec3 reflexion, glm::vec3 glossy, float shininess): 
         diffuse(diffuse), reflexion(reflexion), glossy(glossy), shininess(shininess){};
 
-    Material()
-
+    Material(const tinyobj::material_t& material):
+        diffuse(glm::vec3(material.diffuse[0], material.diffuse[1], material.diffuse[2])),
+        reflexion(glm::vec3(material.specular[0], material.specular[1], material.specular[2])),
+        glossy(glm::vec3(material.ambient[0], material.ambient[1], material.ambient[2])),
+        shininess(material.shininess) {};
 };
 
