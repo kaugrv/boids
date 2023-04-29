@@ -6,6 +6,8 @@ S4 IMAC Project.
 Wendy Gervais & Tristan Debeaune  
 
 # 3D Version
+![ezgif-1-561ba0ed77](https://user-images.githubusercontent.com/103901906/235307217-e818496f-7bb5-4e68-bda2-4ca2a3c2072e.gif)
+
 
 ## GUI
 - [ ] Dear ImGui  
