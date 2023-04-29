@@ -11,6 +11,8 @@
 
 #include "p6/p6.h"
 
+#include "glimac/tiny_obj_loader.h"
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 struct Material {
@@ -26,6 +28,8 @@ struct Material {
 
     Material(glm::vec3 diffuse, glm::vec3 reflexion, glm::vec3 glossy, float shininess): 
         diffuse(diffuse), reflexion(reflexion), glossy(glossy), shininess(shininess){};
+
+    Material()
 
 };
 

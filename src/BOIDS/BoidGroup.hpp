@@ -17,7 +17,7 @@ struct BoidGroupParameters {
     float m_separation{0.};
     float m_alignment{0.};
     float m_radius{20.};
-    int   m_boid_nb{2};
+    int   m_boid_nb{1};
     bool  m_display_visual_range{false};
 };
 

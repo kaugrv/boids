@@ -28,6 +28,8 @@
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
 
+#include "glimac/tiny_obj_loader.h"
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include "3D_RENDER/Input_Movement.hpp"
@@ -85,16 +87,28 @@ int main(int argc, char* argv[])
     glEnable(GL_DEPTH_TEST);
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
+
+
 
     // Boid Object
     glimac::Cone cone(0.5, 0.3, 16, 32);
     Mesh mesh2(cone);
     Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
     Object3D MYOBJECT {.m_mesh = mesh2, .m_material = &material};
-    
+
+    std::vector<tinyobj::shape_t> car_shapes;
+    std::vector<tinyobj::material_t> car_materials;
+
+    tinyobj::LoadObj(car_shapes, car_materials, "..\\assets\\models\\peugeot.obj", "..\\assets\\models\\peugeot.mtl");
+
+    Mesh car(car_shapes);
+    Object3D car_object {.m_mesh = car, .m_material = &material};
+
+
     // Create group
     auto GUI = BoidGroupParameters{};
-    BoidGroup group_of_boids(10);
+    BoidGroup group_of_boids(1);
     MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
 
     // Bounding Box Object
@@ -102,7 +116,7 @@ int main(int argc, char* argv[])
     Mesh mesh(sphr);
     Material materialSphere{glm::vec3(0.1, 0.1, 0.), glm::vec3(0.5), glm::vec3(0.5), 2.};
     Object3D BOUND {.m_mesh = mesh, .m_material = &materialSphere};
-    Sphere                 bounds{glm::vec3(0.), (5.), true};
+    Sphere                 bounds{glm::vec3(0.), (8.), true};
     MainScene.add_obstacle(new Sphere(bounds));
 
     // Loop
@@ -133,7 +147,7 @@ int main(int argc, char* argv[])
 
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
-        MainScene.drawScene(ctx, MYOBJECT);
+        MainScene.drawScene(ctx, car_object);
     };
 
     ctx.maximize_window();
