@@ -43,3 +43,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE doctest::doctest)
 # ---Add p6 library---
 add_subdirectory(lib/p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
+set(P6_RAW_OPENGL_MODE ON CACHE BOOL "")
