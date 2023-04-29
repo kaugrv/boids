@@ -1,6 +1,6 @@
 // #include <winuser.h>
 // BOIDS INCLUDE
-#include <gl/gl.h>
+// #include <gl/gl.h>
 #include "BOIDS/Sdf.hpp"
 #include "glimac/Sphere.hpp"
 #include "glm/matrix.hpp"
