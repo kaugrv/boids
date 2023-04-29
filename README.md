@@ -1,10 +1,10 @@
-# Boids Runner
 
 ![logo2](https://user-images.githubusercontent.com/103901906/235306484-9bbb9bfd-bf6a-4083-b89f-03d63e31dd5b.png)
 
 
-S4 IMAC Project. C++ et Synthèses d'images
-Wendy Gervais & Tristan Debeaune
+S4 IMAC Project.  
+C++ et Synthèses d'images  
+Wendy Gervais & Tristan Debeaune  
 
 # GUI
 - [ ] Dear ImGui  
