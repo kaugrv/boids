@@ -122,23 +122,19 @@ struct Scene3D {
         m_post_process.m_shader.use();
         glBindVertexArray(m_post_process.m_quad.m_vao);
 
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_post_process.m_frame_buffer.m_texture_object);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ctx.main_canvas_width(), ctx.main_canvas_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        m_post_process.m_shader.set("screenTexture", 1);
 
-        glActiveTexture(GL_TEXTURE1);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_post_process.m_frame_buffer.m_depth_texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, ctx.main_canvas_width(), ctx.main_canvas_height(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, ctx.main_canvas_width(), ctx.main_canvas_height(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+
+        m_post_process.m_shader.set("depthTexture", 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glBindTexture(GL_TEXTURE_2D, 0);
-
-        // glBindRenderbuffer(GL_RENDERBUFFER, m_post_process.m_frame_buffer.m_render_object);
-        // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx.main_canvas_width(), ctx.main_canvas_height());
-        // glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-        m_post_process.m_shader.set("screenTexture", 0);
-        m_post_process.m_shader.set("depthTexture", 1);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
     }
 };
