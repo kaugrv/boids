@@ -47,7 +47,7 @@ FrameBuffer::FrameBuffer(p6::Context& ctx)
     glGenTextures(1, &m_texture_object);
     glBindTexture(GL_TEXTURE_2D, m_texture_object);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ctx.main_canvas_width(), ctx.main_canvas_height(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ctx.main_canvas_width(), ctx.main_canvas_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -73,5 +73,5 @@ public:
     FrameBuffer     m_frame_buffer;
 
     PostProcess(p6::Context& ctx)
-        : m_shader(p6::load_shader("../src/3D_RENDER/shaders/test_fog.vs.glsl", "../src/3D_RENDER/shaders/test_fog.fs.glsl")), m_quad(), m_frame_buffer(ctx){};
+        : m_shader(p6::load_shader("../src/3D_RENDER/shaders/post_process.vs.glsl", "../src/3D_RENDER/shaders/post_process.fs.glsl")), m_quad(), m_frame_buffer(ctx){};
 };

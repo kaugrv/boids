@@ -108,7 +108,7 @@ struct Scene3D {
         // POST PROCESS TEST
         //     first I bind my frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, m_post_process.m_frame_buffer.m_frame_buffer_id);
-        glClearColor(1.f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
         glEnable(GL_DEPTH_TEST);
 
@@ -116,12 +116,19 @@ struct Scene3D {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
         glDisable(GL_DEPTH_TEST);
-        glClearColor(0.f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.f, 1.0f, 1.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         m_post_process.m_shader.use();
         glBindVertexArray(m_post_process.m_quad.m_vao);
         glBindTexture(GL_TEXTURE_2D, m_post_process.m_frame_buffer.m_texture_object);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ctx.main_canvas_width(), ctx.main_canvas_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, m_post_process.m_frame_buffer.m_render_object);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx.main_canvas_width(), ctx.main_canvas_height());
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
         m_post_process.m_shader.set("screenTexture", 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }

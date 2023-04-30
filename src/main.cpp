@@ -59,9 +59,7 @@ int main(int argc, char* argv[])
     }
 
     // Actual app
-    auto ctx = p6::Context{{.title = "Boids"}};
-
-    // TO DO : MovementInput has keyboard and mouse
+    auto          ctx   = p6::Context{{.title = "Boids"}};
     MovementInput input = MovementInput{};
 
     // TO DO : add surveyor
@@ -119,7 +117,7 @@ int main(int argc, char* argv[])
 
     // Loop
     ctx.update = [&]() {
-        // ctx.background(p6::Color{0.f, 0.f, 0.5f});
+        ctx.background(p6::Color{0.f, 0.f, 0.5f});
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Input update
@@ -131,7 +129,7 @@ int main(int argc, char* argv[])
         // TO DO : GUI Window in Function
         // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
-        ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
+        ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 100);
         ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
         ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
         ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
@@ -148,7 +146,7 @@ int main(int argc, char* argv[])
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles(), d, s); // Update all boids of the group
 
-        MainScene.drawFinaleScene(ctx, car_object, box);
+        MainScene.drawScene(ctx, car_object, box);
     };
 
     ctx.maximize_window();
