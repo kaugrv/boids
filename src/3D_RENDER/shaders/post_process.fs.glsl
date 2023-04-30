@@ -27,7 +27,7 @@ void main()
                       ? rand.y * black_white
                       : 0.;
 
-    FragColor   = image - noise;
-    FragColor   = depth;
+    FragColor = image - noise;
+    FragColor += depth;
     FragColor.a = 1.;
 }
