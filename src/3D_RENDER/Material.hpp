@@ -20,14 +20,13 @@ struct Material {
     glm::vec3 reflexion{};
     glm::vec3 glossy{};
     float     shininess{};
-
-    // TODO
-    // int texture;
-
+    float alpha{};
+    p6::Image texture = p6::load_image("../assets/logo2.png");
     p6::Shader shader = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
 
-    Material(glm::vec3 diffuse, glm::vec3 reflexion, glm::vec3 glossy, float shininess): 
-        diffuse(diffuse), reflexion(reflexion), glossy(glossy), shininess(shininess){};
+    Material(glm::vec3 diffuse, glm::vec3 reflexion, glm::vec3 glossy, float shininess, float alpha): 
+        diffuse(diffuse), reflexion(reflexion), glossy(glossy), shininess(shininess), alpha(alpha)
+        {};
 
     Material(const tinyobj::material_t& material):
         diffuse(glm::vec3(material.diffuse[0], material.diffuse[1], material.diffuse[2])),

@@ -76,8 +76,6 @@ int main(int argc, char* argv[])
     MainScene.add_dir_light(dir_light);
     MainScene.add_point_light(point_light);
 
-    // Texture
-    p6::Image moon_image = p6::load_image("../assets/models/MoonMap.jpg");
 
     // GL options
     glEnable(GL_DEPTH_TEST);
@@ -87,16 +85,15 @@ int main(int argc, char* argv[])
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Boid Object
-    Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
 
     std::vector<tinyobj::shape_t>    car_shapes;
     std::vector<tinyobj::material_t> car_materials;
 
-    tinyobj::LoadObj(car_shapes, car_materials, "..\\assets\\models\\peugeot.obj", "..\\assets\\models\\peugeot.mtl");
+    tinyobj::LoadObj(car_shapes, car_materials, "..\\assets\\models\\peugeot.obj");
     Mesh car(car_shapes);
+    Material car_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
     // Material car_material(car_materials[0]);
-    Object3D car_object{.m_mesh = car, .m_material = &material};
+    Object3D car_object{.m_mesh = car, .m_material = &car_material};
 
     // Create group
     auto      GUI = BoidGroupParameters{};
@@ -109,7 +106,9 @@ int main(int argc, char* argv[])
 
     tinyobj::LoadObj(box_shapes, box_materials, "..\\assets\\models\\cube.obj");
     Mesh     box_mesh(box_shapes);
-    Object3D box{.m_mesh = box_mesh, .m_material = &material};
+    Material box_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
+
+    Object3D box{.m_mesh = box_mesh, .m_material = &box_material};
 
     Box bounds{glm::vec3(0.), glm::vec3(1.), true};
     MainScene.add_obstacle(new Box(bounds));
@@ -132,23 +131,24 @@ int main(int argc, char* argv[])
         // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
         ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 100);
-        ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
-        ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
-        ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
+        ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 10.f);
+        ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 10.f);
+        ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 10.f);
         ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
 
         ImGui::SliderFloat("Avoid distance", &d, 0.f, 1.f);
-        ImGui::SliderFloat("Avoid strength", &s, 0.f, 1000.f);
+        ImGui::SliderFloat("Avoid strength", &s, -100.f, 100.f);
 
         ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
         // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
+
         ImGui::End();
 
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles(), d, s); // Update all boids of the group
 
-        MainScene.drawFinaleScene(ctx, car_object, box);
+        MainScene.drawScene(ctx, car_object, box);
     };
 
     ctx.maximize_window();

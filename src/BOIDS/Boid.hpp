@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sdf.hpp"
+#include "glm/geometric.hpp"
 #include "p6/p6.h"
 #include "./3D_RENDER/Object3D.hpp"
 
@@ -44,10 +45,13 @@ struct Boid {
     
     glm::mat4 getModelMatrix() {
         glm::mat4 ModelMatrix(1.);
+
+        ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.y)), glm::vec3(0.,1.,0.));
         ModelMatrix = glm::translate(ModelMatrix, m_position);
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.x), glm::vec3(1.,0.,0.));
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.y), glm::vec3(0.,1.,0.));
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_rotation.z), glm::vec3(0.,0.,1.));
+
+        //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.x)), glm::vec3(1.,0.,0.));
+        //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.z)), glm::vec3(0.,0.,1.));
+
         ModelMatrix = glm::scale(ModelMatrix, m_scale);
         return ModelMatrix;
     }

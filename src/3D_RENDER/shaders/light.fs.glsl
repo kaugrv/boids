@@ -26,6 +26,7 @@ uniform int   nb_light_directionnal;
 uniform vec3  K_d;       // reflection coefficient (a color) DIFFUSE  // OK
 uniform vec3  K_s;       // glossy factor  // OK
 uniform float shininess; // OK
+uniform float alpha;
 
 vec3 w_o = normalize(-vertexPos);
 
@@ -84,7 +85,10 @@ void main()
         dir_light += Blinn_Phong_directionnal(i);
     }
 
-    // fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
-    // fFragColor = vec4(point_light + dir_light, 1.);
-    fFragColor = vec4(point_light + dir_light, 1.);
+    fFragColor = vec4((point_light + dir_light) * texture(uTexture, texCoord).xyz, alpha);
+    //fFragColor = vec4(point_light + dir_light, alpha);
+    //fFragColor = vec4(point_light + dir_light, 1.);
+
+    //fFragColor = vec4(vertexNormal, alpha);
+    fFragColor = vec4(texture(uTexture, texCoord).xyz, alpha);
 }

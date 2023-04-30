@@ -131,5 +131,6 @@ struct Scene3D {
 
         m_post_process.m_shader.set("screenTexture", 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
     }
 };

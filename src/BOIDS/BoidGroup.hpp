@@ -9,7 +9,7 @@ glm::vec3 random_vec3(float min, float max) {
 }
 
 static Boid generate_random_boid() {
-    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(1.f, 1.f), glm::normalize(random_vec3(-1.f, 1.f)));
+    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(0.5f, 0.5f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
 struct BoidGroupParameters {

@@ -46,6 +46,8 @@ void set_material(p6::Shader& shader, const Material& material)
     shader.set("K_d", material.diffuse);
     shader.set("K_s", material.glossy);
     shader.set("shininess", material.shininess);
+    shader.set("alpha", material.alpha);
+    shader.set("uTexture", material.texture);
 }
 
 template<typename T> // works for point and directionnal light
@@ -132,4 +134,5 @@ void set_blinn_phong(Material& material, const std::vector<PointLight>& list_lig
     set_matrix(material.shader, MV, ProjMatrix);
     set_material(material.shader, material);
     set_lights(material.shader, list_light, list_directionnal_light, MV);
+    
 }

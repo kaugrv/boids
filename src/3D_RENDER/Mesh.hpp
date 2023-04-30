@@ -184,15 +184,6 @@ public:
 
 void drawMesh(Mesh& mesh)
 {
-    if (mesh.get_ibo() == 0)
-    { // there is no ibo
-        glBindVertexArray(mesh.get_vao());
-        glDrawElements(GL_TRIANGLES, mesh.get_vertex_count(), GL_UNSIGNED_INT, nullptr);
-        glBindVertexArray(0);
-
-        return;
-    }
-
     glBindVertexArray(mesh.get_vao());
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.get_ibo());
     glDrawElements(GL_TRIANGLES, mesh.get_vertex_count(), GL_UNSIGNED_INT, nullptr);
