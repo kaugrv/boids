@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 
     // Create lights
     DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
-    PointLight       point_light{.position = glm::vec3{0.2}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 3.};
+    PointLight       point_light{.position = glm::vec3{0.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 0.1};
 
     // Push them into the scene
     MainScene.add_dir_light(dir_light);

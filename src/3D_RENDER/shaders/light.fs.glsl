@@ -86,5 +86,5 @@ void main()
 
     // fFragColor = (point_light + dir_light) * texture(uTexture, texCoord).xyz;
     // fFragColor = vec4(point_light + dir_light, 1.);
-    fFragColor = vec4(vertexNormal, 0.2);
+    fFragColor = vec4(point_light + dir_light, 1.);
 }
