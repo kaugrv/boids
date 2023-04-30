@@ -132,9 +132,9 @@ struct Scene3D {
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        glBindRenderbuffer(GL_RENDERBUFFER, m_post_process.m_frame_buffer.m_render_object);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx.main_canvas_width(), ctx.main_canvas_height());
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        // glBindRenderbuffer(GL_RENDERBUFFER, m_post_process.m_frame_buffer.m_render_object);
+        // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx.main_canvas_width(), ctx.main_canvas_height());
+        // glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         m_post_process.m_shader.set("screenTexture", 0);
         m_post_process.m_shader.set("depthTexture", 1);

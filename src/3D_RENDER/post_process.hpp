@@ -64,17 +64,17 @@ FrameBuffer::FrameBuffer(p6::Context& ctx)
     // --- setup framebuffer
     glGenFramebuffers(1, &m_frame_buffer_id);
     glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer_id);
-    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depth_texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depth_texture, 0);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture_object, 0);
 
-    // --- setup renderbuffer
-    glGenRenderbuffers(1, &m_render_object);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_render_object);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx.main_canvas_width(), ctx.main_canvas_height());
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    // --- setup renderbuffer / no needs because of the texture ?
+    // glGenRenderbuffers(1, &m_render_object);
+    // glBindRenderbuffer(GL_RENDERBUFFER, m_render_object);
+    // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ctx.main_canvas_width(), ctx.main_canvas_height());
+    // glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_render_object);
+    // glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_render_object);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
