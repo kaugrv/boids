@@ -4,11 +4,10 @@
 #include "glimac/common.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "glimac/Sphere.hpp"
 #include "glimac/Cone.hpp"
-#include "p6/p6.h"
-
+#include "glimac/Sphere.hpp"
 #include "glimac/tiny_obj_loader.h"
+#include "p6/p6.h"
 
 void fill_vbo(GLuint& m_vbo, const int& vertex_count, const glimac::ShapeVertex* shape_data_pointer)
 {
@@ -31,7 +30,7 @@ void setup_vao(GLuint& m_vao, const GLuint& m_vbo)
     glEnableVertexAttribArray(TEXTURE_ATTR_POSITION);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    
+
     glVertexAttribPointer(VERTEX_ATTR_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)offsetof(glimac::ShapeVertex, position));
     glVertexAttribPointer(NORMAL_ATTR_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)offsetof(glimac::ShapeVertex, normal));
     glVertexAttribPointer(TEXTURE_ATTR_POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)offsetof(glimac::ShapeVertex, texCoords));
@@ -40,25 +39,28 @@ void setup_vao(GLuint& m_vao, const GLuint& m_vbo)
     glBindVertexArray(0);
 }
 
-void fill_vbo_obj(GLuint& m_vbo, const std::vector<tinyobj::shape_t>& shapes) {
+void fill_vbo_obj(GLuint& m_vbo, const std::vector<tinyobj::shape_t>& shapes)
+{
     std::vector<GLfloat> vertices{};
-    
-    for (const auto& shape : shapes) {
+
+    for (const auto& shape : shapes)
+    {
         const auto& positions = shape.mesh.positions;
-        const auto& normals = shape.mesh.normals;
+        const auto& normals   = shape.mesh.normals;
         const auto& texcoords = shape.mesh.texcoords;
 
-        for (size_t i = 0; i < positions.size(); i += 3) {
+        for (size_t i = 0; i < positions.size(); i += 3)
+        {
             vertices.push_back(positions[i]);
-            vertices.push_back(positions[i+1]);
-            vertices.push_back(positions[i+2]);
+            vertices.push_back(positions[i + 1]);
+            vertices.push_back(positions[i + 2]);
 
             vertices.push_back(normals[i]);
-            vertices.push_back(normals[i+1]);
-            vertices.push_back(normals[i+2]);
+            vertices.push_back(normals[i + 1]);
+            vertices.push_back(normals[i + 2]);
 
-            vertices.push_back(texcoords[i/3]);
-            vertices.push_back(texcoords[i/3+1]);
+            vertices.push_back(texcoords[i / 3]);
+            vertices.push_back(texcoords[i / 3 + 1]);
         }
     }
 
@@ -69,11 +71,12 @@ void fill_vbo_obj(GLuint& m_vbo, const std::vector<tinyobj::shape_t>& shapes) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-
-void fill_ibo_obj(GLuint& m_ibo, const std::vector<tinyobj::shape_t>& shapes) {
+void fill_ibo_obj(GLuint& m_ibo, const std::vector<tinyobj::shape_t>& shapes)
+{
     std::vector<unsigned int> indices;
 
-    for (int n = 0; n < shapes.size(); n++) {
+    for (int n = 0; n < shapes.size(); n++)
+    {
         const auto& shape_indices = shapes[n].mesh.indices;
         indices.insert(indices.end(), shape_indices.begin(), shape_indices.end());
     }
@@ -83,7 +86,8 @@ void fill_ibo_obj(GLuint& m_ibo, const std::vector<tinyobj::shape_t>& shapes) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 }
 
-void setup_vao_obj(GLuint& m_vao, const GLuint& m_vbo, GLuint& m_ibo, const int& vertex_count) {
+void setup_vao_obj(GLuint& m_vao, const GLuint& m_vbo, GLuint& m_ibo, const int& vertex_count)
+{
     // Generate a new VAO and bind it
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -95,7 +99,7 @@ void setup_vao_obj(GLuint& m_vao, const GLuint& m_vbo, GLuint& m_ibo, const int&
 
     // Bind the VBO and specify the attribute pointers
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0); // position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);                     // position
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat))); // normal
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat))); // texCoords
 
@@ -105,15 +109,14 @@ void setup_vao_obj(GLuint& m_vao, const GLuint& m_vbo, GLuint& m_ibo, const int&
     // Unbind the VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    
-
 }
 
-
-GLsizei get_vertex_count_obj(const std::vector<tinyobj::shape_t>& shapes) {
-    GLsizei n=0;
-    for(const auto& shape : shapes) {
-        n+=shape.mesh.indices.size();
+GLsizei get_vertex_count_obj(const std::vector<tinyobj::shape_t>& shapes)
+{
+    GLsizei n = 0;
+    for (const auto& shape : shapes)
+    {
+        n += shape.mesh.indices.size();
     }
 
     return n;
@@ -123,8 +126,8 @@ class Mesh {
 private:
     GLuint  m_vbo;
     GLuint  m_vao;
-    GLuint m_ibo;
-    GLsizei vertex_count=0;
+    GLuint  m_ibo;
+    GLsizei vertex_count = 0;
 
 public:
     Mesh()                 = default;
@@ -140,7 +143,7 @@ public:
     Mesh(const glimac::Sphere& sphr)
         : vertex_count(sphr.getVertexCount())
     {
-        fill_vbo(m_vbo,sphr.getVertexCount(), sphr.getDataPointer());
+        fill_vbo(m_vbo, sphr.getVertexCount(), sphr.getDataPointer());
         setup_vao(m_vao, m_vbo);
     }
 
@@ -151,14 +154,13 @@ public:
         setup_vao(m_vao, m_vbo);
     }
 
-    Mesh(const std::vector<tinyobj::shape_t>& shapes) 
+    Mesh(const std::vector<tinyobj::shape_t>& shapes)
         : vertex_count(get_vertex_count_obj(shapes))
     {
         fill_vbo_obj(m_vbo, shapes);
         fill_ibo_obj(m_ibo, shapes);
         setup_vao_obj(m_vao, m_vbo, m_ibo, get_vertex_count_obj(shapes));
     }
-
 
     GLuint get_vao()
     {
@@ -169,7 +171,8 @@ public:
         return m_vbo;
     }
 
-    GLuint get_ibo() {
+    GLuint get_ibo()
+    {
         return m_ibo;
     }
 
@@ -179,7 +182,17 @@ public:
     }
 };
 
-void drawMesh(Mesh &mesh) {
+void drawMesh(Mesh& mesh)
+{
+    if (mesh.get_ibo() == 0)
+    { // there is no ibo
+        glBindVertexArray(mesh.get_vao());
+        glDrawElements(GL_TRIANGLES, mesh.get_vertex_count(), GL_UNSIGNED_INT, nullptr);
+        glBindVertexArray(0);
+
+        return;
+    }
+
     glBindVertexArray(mesh.get_vao());
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.get_ibo());
     glDrawElements(GL_TRIANGLES, mesh.get_vertex_count(), GL_UNSIGNED_INT, nullptr);
