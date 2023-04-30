@@ -82,8 +82,10 @@ int main(int argc, char* argv[])
     // GL options
     glEnable(GL_DEPTH_TEST);
     // glEnable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
+    //  glCullFace(GL_BACK);
     glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Boid Object
     Material material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2.};
@@ -146,7 +148,7 @@ int main(int argc, char* argv[])
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles(), d, s); // Update all boids of the group
 
-        MainScene.drawScene(ctx, car_object, box);
+        MainScene.drawFinaleScene(ctx, car_object, box);
     };
 
     ctx.maximize_window();
