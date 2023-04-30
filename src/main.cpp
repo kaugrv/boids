@@ -32,11 +32,11 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "3D_RENDER/Input_Movement.hpp"
 #include "3D_RENDER/Material.hpp"
 #include "3D_RENDER/Mesh.hpp"
 #include "3D_RENDER/Texture.hpp"
 #include "3D_RENDER/free_camera.hpp"
+#include "3D_RENDER/movement_input.hpp"
 #include "3D_RENDER/post_process.hpp"
 #include "3D_RENDER/random_sphere.hpp"
 #include "3D_RENDER/renderer.hpp"
@@ -62,8 +62,7 @@ int main(int argc, char* argv[])
     auto ctx = p6::Context{{.title = "Boids"}};
 
     // TO DO : MovementInput has keyboard and mouse
-    MovementInput keyboard = MovementInput{};
-    Mouse         mouse    = Mouse{};
+    MovementInput input = MovementInput{};
 
     // TO DO : add surveyor
 
@@ -105,18 +104,18 @@ int main(int argc, char* argv[])
     MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
 
     // Bounding Box Object
-    std::vector<tinyobj::shape_t> box_shapes;
+    std::vector<tinyobj::shape_t>    box_shapes;
     std::vector<tinyobj::material_t> box_materials;
 
     tinyobj::LoadObj(box_shapes, box_materials, "..\\assets\\models\\cube.obj");
-    Mesh box_mesh(box_shapes);
-    Object3D box {.m_mesh = box_mesh, .m_material = &material};
+    Mesh     box_mesh(box_shapes);
+    Object3D box{.m_mesh = box_mesh, .m_material = &material};
 
-    Box                 bounds{glm::vec3(0.), glm::vec3(1.), true};
+    Box bounds{glm::vec3(0.), glm::vec3(1.), true};
     MainScene.add_obstacle(new Box(bounds));
 
-    float d=0.2;
-    float s=100;
+    float d = 0.2;
+    float s = 100;
 
     // Loop
     ctx.update = [&]() {
@@ -124,11 +123,10 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Input update
-        keyboard.update_pressed_values(ctx);
-        mouse.update_mouse(ctx);
+        input.update_input(ctx);
 
         // Camera Update
-        MainScene.update_cameras(mouse, keyboard, ctx.delta_time());
+        MainScene.update_cameras(input, ctx.delta_time());
 
         // TO DO : GUI Window in Function
         // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
@@ -138,7 +136,7 @@ int main(int argc, char* argv[])
         ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
         ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
         ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
-        
+
         ImGui::SliderFloat("Avoid distance", &d, 0.f, 1.f);
         ImGui::SliderFloat("Avoid strength", &s, 0.f, 1000.f);
 
@@ -147,10 +145,10 @@ int main(int argc, char* argv[])
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
         ImGui::End();
 
-        MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                           // Retrieve GUI slider and button changes
-        MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
+        MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
+        MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles(), d, s); // Update all boids of the group
 
-        MainScene.drawFinaleScene(ctx, car_object,box);
+        MainScene.drawFinaleScene(ctx, car_object, box);
     };
 
     ctx.maximize_window();

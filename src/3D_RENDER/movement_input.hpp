@@ -14,7 +14,6 @@
 #include <GLFW/glfw3.h>
 #include "p6/p6.h"
 
-// struture de la souris
 struct Mouse {
     glm::dvec2 position{};
     glm::dvec2 delta{};
@@ -22,16 +21,17 @@ struct Mouse {
     bool is_left_button_pressed;
     bool is_right_button_pressed;
 
-    void update_mouse(const p6::Context& ctx) {
+    void update_mouse(const p6::Context& ctx)
+    {
         position = ctx.mouse();
-        delta = ctx.mouse_delta();
+        delta    = ctx.mouse_delta();
 
-        is_left_button_pressed = ctx.mouse_button_is_pressed(p6::Button::Left);
+        is_left_button_pressed  = ctx.mouse_button_is_pressed(p6::Button::Left);
         is_right_button_pressed = ctx.mouse_button_is_pressed(p6::Button::Right);
     }
 };
 
-struct MovementInput {
+struct Keyboard {
     int forward_pressed;
     int backward_pressed;
     int left_pressed;
@@ -61,5 +61,16 @@ struct MovementInput {
         std::cout << "left : " << static_cast<char>(left_key) << " / " << left_pressed << std::endl;
         std::cout << "right : " << static_cast<char>(right_key) << " / " << right_pressed << std::endl;
         std::cout << "down : " << static_cast<char>(down_key) << " / " << down_pressed << std::endl;
+    }
+};
+
+struct MovementInput {
+    Mouse    m_mouse;
+    Keyboard m_keyboard;
+
+    void update_input(const p6::Context& ctx)
+    {
+        m_mouse.update_mouse(ctx);
+        m_keyboard.update_pressed_values(ctx);
     }
 };
