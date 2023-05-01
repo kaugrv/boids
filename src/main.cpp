@@ -76,7 +76,6 @@ int main(int argc, char* argv[])
     MainScene.add_dir_light(dir_light);
     MainScene.add_point_light(point_light);
 
-
     // GL options
     glEnable(GL_DEPTH_TEST);
     // glEnable(GL_CULL_FACE);
@@ -85,12 +84,11 @@ int main(int argc, char* argv[])
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
     std::vector<tinyobj::shape_t>    car_shapes;
     std::vector<tinyobj::material_t> car_materials;
 
     tinyobj::LoadObj(car_shapes, car_materials, "..\\assets\\models\\peugeot.obj");
-    Mesh car(car_shapes);
+    Mesh     car(car_shapes);
     Material car_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
     // Material car_material(car_materials[0]);
     Object3D car_object{.m_mesh = car, .m_material = &car_material};
