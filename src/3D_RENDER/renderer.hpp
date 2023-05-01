@@ -42,8 +42,7 @@ struct Scene3D {
 
     void update_cameras(const MovementInput& input, float delta_time)
     {
-        m_trackBallCamera.updateTrackBallCamera(input.m_mouse.delta, input.m_mouse.is_left_button_pressed, input.m_mouse.is_right_button_pressed);
-        m_freeCam.updateFreeCamera(delta_time, input);
+        freecam_is_used ?  m_freeCam.updateFreeCamera(delta_time, input) : m_trackBallCamera.updateTrackBallCamera(input.m_mouse.delta, input.m_mouse.is_left_button_pressed, input.m_mouse.is_right_button_pressed);
     }
 
     glm::mat4 getViewMatrix()
