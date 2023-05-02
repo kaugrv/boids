@@ -30,6 +30,9 @@ float linearize_depth(float d,float zNear,float zFar)
     return zNear * zFar / (zFar + d * (zNear - zFar));
 }
 
+float linear_fog(float factor){
+    return (far_plane-factor)/(far_plane-near_plane);
+}
 
 float exp_fog(float factor, float density){
     return 1./exp(density*factor);
@@ -39,6 +42,22 @@ float exp_sqrd_fog(float factor,float density){
 }
 
 
+float compute_fog_factor(int fog_type,float factor, float density){
+    switch(fog_type){
+        case 2: // linear
+            return 1.-linear_fog(factor); // cassé :( a cause de imgui je crois 
+            break;
+
+        case 1: // exponential
+            return 1.-exp_fog(factor, density);
+            break;
+        
+        case 0: // exponential squared
+            return 1.-exp_sqrd_fog(factor,density);
+            break;
+    }
+}
+
 void main()
 {
     vec4  image = texture(screenTexture, TexCoords);
@@ -46,7 +65,7 @@ void main()
 
     depth = linearize_depth(depth,near_plane,far_plane)*far_plane;
 
-    float fog_factor = 1-exp_sqrd_fog(depth,fog_density); 
+    float fog_factor = compute_fog_factor(fog_type,depth,fog_density); 
 
     vec2  rand        = hash_0_to_1_2D_to_2D(TexCoords * 100);
     float Density     = 0.2;

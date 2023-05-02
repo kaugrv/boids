@@ -128,7 +128,6 @@ int main(int argc, char* argv[])
         MainScene.update_cameras(input, ctx.delta_time());
 
         // TO DO : GUI Window in Function
-        // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
         if(ImGui::CollapsingHeader("Boids Parameters"))
         {
@@ -148,14 +147,25 @@ int main(int argc, char* argv[])
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
 
         if(ImGui::CollapsingHeader("Post Processing")){
+            if (ImGui::TreeNode("type of fog"))
+                {
+                    std::vector<std::string> fogs_type_name{"squared exponential", "exponential","linear"};
+
+                    static int selected = post_processGUI.m_fog_type;
+                    for (int n = 0; n < 3; n++)
+                    {
+                        if (ImGui::Selectable(fogs_type_name[n].data(), selected == n))
+                            selected = n;
+                    }
+                    post_processGUI.m_fog_type = selected;
+                    ImGui::TreePop();
+                }
             ImGui::SliderFloat("fog density", &post_processGUI.m_fog_density, 0.f, 1.f);
             ImGui::SliderFloat("fog near plane", &post_processGUI.m_near_plane, 0.01f, 5.f);
             ImGui::SliderFloat("fog far plane", &post_processGUI.m_far_plane, 10.f, 300.f);
             ImGui::ColorPicker4("background color",&post_processGUI.m_background_color.r);
         }
         ImGui::End();
-
-
 
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
         MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);

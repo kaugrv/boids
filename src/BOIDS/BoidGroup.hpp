@@ -171,7 +171,6 @@ public:
         for (auto& boid : m_boids)
         {
             boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.m_direction);
-            std::cout << cohesion(boid).x << cohesion(boid).y  << cohesion(boid).z << std::endl;
             
 
             // Check collisions with all obstacles of the scene (including bounds)

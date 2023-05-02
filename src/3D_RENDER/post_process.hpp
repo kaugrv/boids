@@ -1,8 +1,8 @@
 #pragma once
 #include "p6/p6.h"
 struct PostProcessParameters {
-    float m_fog_density = 0.1f;
-    int m_fog_type = 2; // 0 linear / 1 exp / 2 sqrt exp
+    float m_fog_density = 0.05f;
+    int m_fog_type = 0; // 2 linear / 1 exp / 0 sqrt exp
     float m_near_plane = 0.1f;
     float m_far_plane = 100.f;
     glm::vec3 m_background_color{0.};
