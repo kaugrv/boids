@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         MainScene.update_cameras(input, ctx.delta_time());
 
         // TO DO : GUI Window in Function
-        // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
+        ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
         ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 100);
         ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 10.f);
@@ -142,6 +142,8 @@ int main(int argc, char* argv[])
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
 
         ImGui::End();
+
+
 
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles(), d, s); // Update all boids of the group
