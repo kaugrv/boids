@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
 
     // Create group
     auto      GUI = BoidGroupParameters{};
+    auto post_processGUI = PostProcessParameters{};
+
     BoidGroup group_of_boids(1);
     MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
 
@@ -126,26 +128,37 @@ int main(int argc, char* argv[])
         MainScene.update_cameras(input, ctx.delta_time());
 
         // TO DO : GUI Window in Function
-        ImGui::ShowDemoWindow(); // Show the official ImGui demo window
+        // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
         ImGui::Begin("Parameters");
-        ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 100);
-        ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 10.f);
-        ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 10.f);
-        ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 10.f);
-        ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
+        if(ImGui::CollapsingHeader("Boids Parameters"))
+        {
+            ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 100);
+            ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 10.f);
+            ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 10.f);
+            ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 10.f);
+            ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
 
-        ImGui::SliderFloat("Avoid distance", &d, 0.f, 1.f);
-        ImGui::SliderFloat("Avoid strength", &s, -100.f, 100.f);
+            ImGui::SliderFloat("Avoid distance", &d, 0.f, 1.f);
+            ImGui::SliderFloat("Avoid strength", &s, -100.f, 100.f);
 
-        ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
-        // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
+            ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
+            // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
+        }
+
         ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
 
+        if(ImGui::CollapsingHeader("Post Processing")){
+            ImGui::SliderFloat("fog density", &post_processGUI.m_fog_density, 0.f, 1.f);
+            ImGui::SliderFloat("fog near plane", &post_processGUI.m_near_plane, 0.01f, 5.f);
+            ImGui::SliderFloat("fog far plane", &post_processGUI.m_far_plane, 10.f, 300.f);
+            ImGui::ColorPicker4("background color",&post_processGUI.m_background_color.r);
+        }
         ImGui::End();
 
 
 
         MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
+        MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
         MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles(), d, s); // Update all boids of the group
 
         MainScene.drawFinaleScene(ctx, car_object, box);

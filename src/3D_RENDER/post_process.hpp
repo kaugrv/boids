@@ -1,5 +1,14 @@
 #pragma once
 #include "p6/p6.h"
+struct PostProcessParameters {
+    float m_fog_density = 0.1f;
+    int m_fog_type = 2; // 0 linear / 1 exp / 2 sqrt exp
+    float m_near_plane = 0.1f;
+    float m_far_plane = 100.f;
+    glm::vec3 m_background_color{0.};
+};
+
+
 
 class QuadPostProcess {
 public:
@@ -83,4 +92,15 @@ public:
 
     PostProcess(p6::Context& ctx)
         : m_shader(p6::load_shader("../src/3D_RENDER/shaders/post_process.vs.glsl", "../src/3D_RENDER/shaders/post_process.fs.glsl")), m_quad(), m_frame_buffer(ctx){};
+
+    void update_from_GUI_parameters(PostProcessParameters parameters);
+};
+
+
+void PostProcess::update_from_GUI_parameters(PostProcessParameters parameters){
+    m_shader.set("near_plane",parameters.m_near_plane);
+    m_shader.set("far_plane",parameters.m_far_plane);
+    m_shader.set("fog_type",parameters.m_fog_type);
+    m_shader.set("fog_density",0.1f*parameters.m_fog_density);
+    m_shader.set("fog_background_color",parameters.m_background_color);
 };
