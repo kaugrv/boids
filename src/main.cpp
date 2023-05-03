@@ -1,16 +1,51 @@
 // #include <winuser.h>
-#include "Sdf.hpp"
+// BOIDS INCLUDE
+// #include <gl/gl.h>
+#include "BOIDS/Sdf.hpp"
+#include "glimac/Sphere.hpp"
+#include "glm/matrix.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "Boid.hpp"
-#include "BoidGroup.hpp"
-#include "Surveyor.hpp"
+#include "BOIDS/Boid.hpp"
+#include "BOIDS/BoidGroup.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
+
+// 3D INCLUDE
+//  #include <GL/glext.h>
+#include <algorithm>
+#include <array>
+#include <cmath>
+// #include <glimac/FilePath.hpp>
+#include <utility>
+// #include "glimac/Image.hpp"
+#include "3D_RENDER/light.hpp"
+#include "glimac/tiny_obj_loader.h"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/scalar_constants.hpp"
+#include "glm/fwd.hpp"
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include "3D_RENDER/Material.hpp"
+#include "3D_RENDER/Mesh.hpp"
+#include "3D_RENDER/Texture.hpp"
+#include "3D_RENDER/free_camera.hpp"
+#include "3D_RENDER/movement_input.hpp"
+#include "3D_RENDER/post_process.hpp"
+#include "3D_RENDER/random_sphere.hpp"
+#include "3D_RENDER/renderer.hpp"
+#include "3D_RENDER/shader_program.hpp"
+#include "3D_RENDER/track_ball_camera.hpp"
+
+#include "App.hpp"
+
+// TO DO : clean all includes
 
 int main(int argc, char* argv[])
 {
@@ -25,68 +60,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    // Actual app
-    auto ctx = p6::Context{{.title = "Boids"}};
-    auto GUI = BoidGroupBehavior{};
+    Application App{} ;
+    App.initialize();
+    App.update();
 
-    // Create group
-    BoidGroup group_of_boids(1);
-
-    // Create scene
-    Scene MainScene;
-
-    Box                 bounds{glm::vec2(0.), glm::vec2(1.), true};
-    Box                 box{glm::vec2(0.), glm::vec2(0.2, 0.1)};
-    Circle              circle(glm::vec2(0.5f, 0.5f), 0.1f);
-    Circle              circle2(glm::vec2(-0.5f, 0.5f), 0.1f);
-    Circle              circle3(glm::vec2(-0.5f, -0.5f), 0.1f);
-    Circle              circle4(glm::vec2(0.5f, -0.5f), 0.1f);
-    EquilateralTriangle triangle(glm::vec2(0.f, 0.3f), 0.2f);
-
-    MainScene.add_obstacle(new Box(bounds));
-    MainScene.add_obstacle(new Box(box));
-    MainScene.add_obstacle(new Circle(circle));
-    MainScene.add_obstacle(new Circle(circle2));
-    MainScene.add_obstacle(new Circle(circle3));
-    MainScene.add_obstacle(new Circle(circle4));
-    MainScene.add_obstacle(new EquilateralTriangle(triangle));
-
-    // Mouse "boid"
-    Surveyor  me;
-    glm::vec2 mouse_position(0.);
-    float     follow_mouse_factor = 0.;
-
-    ctx.update = [&]() {
-        ctx.background(p6::Color{1.f, 1.f, 1.f});
-        mouse_position = ctx.mouse();
-
-        // ImGui::ShowDemoWindow(); // Show the official ImGui demo window
-
-        ImGui::Begin("Parameters");
-        ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 200);
-        ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
-        ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
-        ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
-        ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
-        ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
-        ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
-        ImGui::End();
-
-        MainScene.draw(ctx);
-
-        group_of_boids.update_behavior(GUI);                          // Retrieve GUI slider and button changes
-        group_of_boids.update_all_boids(ctx.delta_time(), MainScene); // Update all boids of the group
-        group_of_boids.draw_boids(ctx);
-
-        me.update_surveyor_position(ctx);
-
-        if (ctx.mouse_button_is_pressed(p6::Button::Left))
-            group_of_boids.reach_target(follow_mouse_factor, mouse_position);
-        me.draw(ctx);
-    };
-
-    ctx.maximize_window();
-
-    // Should be done last. It starts the infinite loop.
-    ctx.start();
 };
