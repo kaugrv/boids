@@ -4,7 +4,6 @@
 #include "glimac/common.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "glimac/Sphere.hpp"
 #include "glimac/tiny_obj_loader.h"
 #include "p6/p6.h"
 
@@ -137,14 +136,6 @@ public:
         // glDeleteBuffers(1, &m_vbo);
         // glDeleteVertexArrays(1, &m_vao);
     };
-
-    // TODO constructor from a file path (.obj)
-    Mesh(const glimac::Sphere& sphr)
-        : vertex_count(sphr.getVertexCount())
-    {
-        fill_vbo(m_vbo, sphr.getVertexCount(), sphr.getDataPointer());
-        setup_vao(m_vao, m_vbo);
-    }
 
     Mesh(const std::vector<tinyobj::shape_t>& shapes)
         : vertex_count(get_vertex_count_obj(shapes))

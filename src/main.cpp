@@ -2,7 +2,6 @@
 // BOIDS INCLUDE
 // #include <gl/gl.h>
 #include "BOIDS/Sdf.hpp"
-#include "glimac/Sphere.hpp"
 #include "glm/matrix.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
@@ -38,7 +37,6 @@
 #include "3D_RENDER/free_camera.hpp"
 #include "3D_RENDER/movement_input.hpp"
 #include "3D_RENDER/post_process.hpp"
-#include "3D_RENDER/random_sphere.hpp"
 #include "3D_RENDER/renderer.hpp"
 #include "3D_RENDER/shader_program.hpp"
 #include "3D_RENDER/track_ball_camera.hpp"
