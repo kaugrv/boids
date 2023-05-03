@@ -164,8 +164,10 @@ public:
         }
     }
 
-    void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles, float& avoid_distance, float& avoid_strength)
+    void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles)
     {
+        float avoid_distance = 0.2;
+        float avoid_strength = 200.;
         update_boid_number();
 
         for (auto& boid : m_boids)
