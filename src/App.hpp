@@ -13,6 +13,9 @@ struct Application {
     BoidGroupParameters GUI = BoidGroupParameters{};
     PostProcessParameters post_processGUI = PostProcessParameters{};
 
+    std::vector<std::shared_ptr<Material>> list_material_used;
+    std::vector<std::shared_ptr<Mesh>> list_mesh_used;
+
     void initialize(){ 
 
         // Create lights
@@ -39,9 +42,12 @@ struct Application {
         Mesh     car(car_shapes);
         auto car_mat_ptr = std::make_shared<Material>();
         car_mat_ptr.get()->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
+        list_material_used.push_back(car_mat_ptr);
+        list_mesh_used.push_back(std::make_shared<Mesh>(car));
 
-        Object3D car_object {.m_mesh = car, .m_material = car_mat_ptr};
+        Object3D car_object {.m_mesh = list_mesh_used[0], .m_material = list_material_used[0]};
 
+        m_car = car_object;
 
         BoidGroup group_of_boids(1);
         MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
@@ -54,14 +60,16 @@ struct Application {
         Mesh     box_mesh(box_shapes);
         auto box_material_ptr = std::make_shared<Material>();
         box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
+        list_material_used.push_back(box_material_ptr);
+        list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
 
         // Object3D box;
         // box.m_mesh = box_mesh;
         // box.m_material = std::move(box_material_ptr);
         // Material box_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
 
-        Object3D box{.m_mesh = box_mesh, .m_material = box_material_ptr};
-        // m_box = box;
+        Object3D box{.m_mesh = list_mesh_used[1], .m_material = list_material_used[1]};
+        m_box = box;
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
         MainScene.add_obstacle(new Box(bounds));

@@ -135,8 +135,8 @@ public:
 
     ~Mesh()
     {
-        glDeleteBuffers(1, &m_vbo);
-        glDeleteVertexArrays(1, &m_vao);
+        // glDeleteBuffers(1, &m_vbo);
+        // glDeleteVertexArrays(1, &m_vao);
     };
 
     // TODO constructor from a file path (.obj)

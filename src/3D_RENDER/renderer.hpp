@@ -93,13 +93,13 @@ struct Scene3D {
             object.m_material->shader.use();
             glm::mat4 MVMatrix = getViewMatrix() * boid.getModelMatrix();
             set_blinn_phong(*object.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-            drawMesh(object.m_mesh);
+            drawMesh(*object.m_mesh);
         }
 
         bound_box.m_material->shader.use();
         glm::mat4 MVMatrix = getViewMatrix() * glm::mat4(1.);
         set_blinn_phong(*bound_box.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(bound_box.m_mesh);
+        drawMesh(*bound_box.m_mesh);
     }
 
     void drawFinaleScene(const p6::Context& ctx, Object3D& object, Object3D& bound_box)
