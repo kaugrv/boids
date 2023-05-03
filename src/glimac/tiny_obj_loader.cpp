@@ -196,7 +196,7 @@ updateVertex(
     texcoords.push_back(in_texcoords[2*i.vt_idx+1]);
   }
 
-  unsigned int idx = positions.size() / 3 - 1;
+  const unsigned int idx = positions.size() / 3 - 1;
   vertexCache[i] = idx;
 
   return idx;
@@ -238,9 +238,7 @@ exportFaceGroupToShape(
     return false;
   }
 
-  size_t offset;
-
-  offset = shape.mesh.indices.size();
+  size_t offset = shape.mesh.indices.size();
 
   // Flatten vertices and indices
   for (size_t i = 0; i < faceGroup.size(); i++) {
