@@ -37,10 +37,11 @@ struct Application {
 
         tinyobj::LoadObj(car_shapes, car_materials, "..\\assets\\models\\peugeot.obj");
         Mesh     car(car_shapes);
-        Material car_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
-        // Material car_material(car_materials[0]);
-        Object3D car_object{.m_mesh = car, .m_material = &car_material};
-        m_car = car_object;
+        auto car_mat_ptr = std::make_shared<Material>();
+        car_mat_ptr.get()->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
+
+        Object3D car_object {.m_mesh = car, .m_material = car_mat_ptr};
+
 
         BoidGroup group_of_boids(1);
         MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
@@ -51,10 +52,16 @@ struct Application {
 
         tinyobj::LoadObj(box_shapes, box_materials, "..\\assets\\models\\cube.obj");
         Mesh     box_mesh(box_shapes);
-        Material box_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
+        auto box_material_ptr = std::make_shared<Material>();
+        box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
 
-        Object3D box{.m_mesh = box_mesh, .m_material = &box_material};
-        m_box = box;
+        // Object3D box;
+        // box.m_mesh = box_mesh;
+        // box.m_material = std::move(box_material_ptr);
+        // Material box_material{glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
+
+        Object3D box{.m_mesh = box_mesh, .m_material = box_material_ptr};
+        // m_box = box;
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
         MainScene.add_obstacle(new Box(bounds));

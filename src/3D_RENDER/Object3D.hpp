@@ -6,5 +6,5 @@
 
 struct Object3D {
     Mesh m_mesh{};
-    Material* m_material{};
+    std::shared_ptr<Material> m_material;
 };

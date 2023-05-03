@@ -43,10 +43,10 @@ void set_matrix(p6::Shader& shader, const glm::mat4& MV, const glm::mat4& ProjMa
 
 void set_material(p6::Shader& shader, const Material& material)
 {
-    shader.set("K_d", material.diffuse);
-    shader.set("K_s", material.glossy);
-    shader.set("shininess", material.shininess);
-    shader.set("alpha", material.alpha);
+    shader.set("K_d", material.parameters.diffuse);
+    shader.set("K_s", material.parameters.glossy);
+    shader.set("shininess", material.parameters.shininess);
+    shader.set("alpha", material.parameters.alpha);
     shader.set("uTexture", material.texture);
 }
 

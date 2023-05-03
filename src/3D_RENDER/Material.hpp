@@ -15,23 +15,29 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-struct Material {
+struct MaterialParameters{
     glm::vec3 diffuse{};
     glm::vec3 reflexion{};
     glm::vec3 glossy{};
     float     shininess{};
     float alpha{};
+};
+
+struct Material {
+    struct MaterialParameters parameters{};
+
     p6::Image texture = p6::load_image("../assets/logo2.png");
     p6::Shader shader = p6::load_shader("../src/3D_RENDER/shaders/3D.vs.glsl", "../src/3D_RENDER/shaders/light.fs.glsl");
 
+    Material() = default;
+
     Material(glm::vec3 diffuse, glm::vec3 reflexion, glm::vec3 glossy, float shininess, float alpha): 
-        diffuse(diffuse), reflexion(reflexion), glossy(glossy), shininess(shininess), alpha(alpha)
+        parameters{diffuse,reflexion,glossy,shininess,alpha}
         {};
 
     Material(const tinyobj::material_t& material):
-        diffuse(glm::vec3(material.diffuse[0], material.diffuse[1], material.diffuse[2])),
-        reflexion(glm::vec3(material.specular[0], material.specular[1], material.specular[2])),
-        glossy(glm::vec3(material.ambient[0], material.ambient[1], material.ambient[2])),
-        shininess(material.shininess) {};
+        parameters{glm::vec3(material.diffuse[0], material.diffuse[1], material.diffuse[2]),
+                   glm::vec3(material.specular[0], material.specular[1], material.specular[2]),
+                   glm::vec3(material.ambient[0], material.ambient[1], material.ambient[2]),
+                   material.shininess} {};
 };
-
