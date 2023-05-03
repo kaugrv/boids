@@ -4,7 +4,6 @@
 #include "glimac/common.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "glimac/Cone.hpp"
 #include "glimac/Sphere.hpp"
 #include "glimac/tiny_obj_loader.h"
 #include "p6/p6.h"
@@ -144,13 +143,6 @@ public:
         : vertex_count(sphr.getVertexCount())
     {
         fill_vbo(m_vbo, sphr.getVertexCount(), sphr.getDataPointer());
-        setup_vao(m_vao, m_vbo);
-    }
-
-    Mesh(const glimac::Cone& cone)
-        : vertex_count(cone.getVertexCount())
-    {
-        fill_vbo(m_vbo, cone.getVertexCount(), cone.getDataPointer());
         setup_vao(m_vao, m_vbo);
     }
 
