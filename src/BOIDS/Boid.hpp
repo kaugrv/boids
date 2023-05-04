@@ -46,13 +46,15 @@ struct Boid {
     glm::mat4 getModelMatrix() {
         glm::mat4 ModelMatrix(1.);
 
-        ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.y)), glm::vec3(0.,1.,0.));
         ModelMatrix = glm::translate(ModelMatrix, m_position);
+        //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.x)), glm::vec3(0.,1.,0.));
+        //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_position.y-m_direction.y)), glm::vec3(1.,0.,0.));
+        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(m_direction.x-m_position.x), glm::vec3(0.,1.,0.));
 
-        //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.x)), glm::vec3(1.,0.,0.));
-        //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.z)), glm::vec3(0.,0.,1.));
 
-        ModelMatrix = glm::scale(ModelMatrix, m_scale);
+        // //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.y)), glm::vec3(0.,1.,0.));
+        // //ModelMatrix = glm::rotate(ModelMatrix, (glm::radians(m_direction.z)), glm::vec3(0.,0.,1.));
+        // ModelMatrix = glm::scale(ModelMatrix, m_scale);
         return ModelMatrix;
     }
 };
