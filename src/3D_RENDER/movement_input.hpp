@@ -55,13 +55,7 @@ struct Keyboard {
         up_pressed       = ctx.key_is_pressed(up_key);
         down_pressed     = ctx.key_is_pressed(down_key);
     }
-    void debug_movement_input() const
-    {
-        std::cout << "Up : " << static_cast<char>(up_key) << " / " << up_pressed << std::endl;
-        std::cout << "left : " << static_cast<char>(left_key) << " / " << left_pressed << std::endl;
-        std::cout << "right : " << static_cast<char>(right_key) << " / " << right_pressed << std::endl;
-        std::cout << "down : " << static_cast<char>(down_key) << " / " << down_pressed << std::endl;
-    }
+
 };
 
 struct MovementInput {

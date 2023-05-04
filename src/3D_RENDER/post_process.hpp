@@ -8,8 +8,6 @@ struct PostProcessParameters {
     glm::vec3 m_background_color{0.};
 };
 
-
-
 class QuadPostProcess {
 public:
     GLuint  m_vbo;
@@ -18,6 +16,7 @@ public:
 
     QuadPostProcess();
 };
+
 QuadPostProcess::QuadPostProcess()
 {
     float quadVertices[] = {// vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
@@ -50,6 +49,7 @@ public:
 
     FrameBuffer(p6::Context& ctx);
 };
+
 FrameBuffer::FrameBuffer(p6::Context& ctx)
 {
     // --- setup color texture

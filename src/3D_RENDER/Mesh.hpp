@@ -14,6 +14,7 @@ void fill_vbo(GLuint& m_vbo, const int& vertex_count, const glimac::ShapeVertex*
     glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glimac::ShapeVertex), shape_data_pointer, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
 void setup_vao(GLuint& m_vao, const GLuint& m_vbo)
 {
     glGenVertexArrays(1, &m_vao);
@@ -153,12 +154,10 @@ public:
     {
         return m_vbo;
     }
-
     GLuint get_ibo()
     {
         return m_ibo;
     }
-
     GLsizei get_vertex_count()
     {
         return vertex_count;
