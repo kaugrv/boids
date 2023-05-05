@@ -2,6 +2,63 @@
 #include "p6/p6.h"
 #include "3D_RENDER/movement_input.hpp"
 
+
+
+void update_boid_GUI(BoidGroupParameters& boid_parameters){
+    if(ImGui::CollapsingHeader("Boids Parameters"))
+        {
+            ImGui::SliderInt("Number of boids", &boid_parameters.m_boid_nb, 0, 100);
+            ImGui::SliderFloat("Cohesion", &boid_parameters.m_cohesion, 0.f, 1.f);
+            ImGui::SliderFloat("Separation", &boid_parameters.m_separation, 0.f, 1.f);
+            ImGui::SliderFloat("Alignment", &boid_parameters.m_alignment, 0.f, 1.f);
+            ImGui::SliderFloat("Visual range", &boid_parameters.m_radius, 0.f, 0.5f);
+            ImGui::Checkbox("Display visual range", &boid_parameters.m_display_visual_range);
+            // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
+        }
+};
+
+
+void update_fog_UI(FogParameters& fog_parameters){
+    if (ImGui::TreeNode("type of fog"))
+        {
+            std::vector<std::string> fogs_type_name{"squared exponential", "exponential","linear"};
+
+            static int selected = fog_parameters.m_fog_type;
+            for (int n = 0; n < 3; n++)
+            {
+                if (ImGui::Selectable(fogs_type_name[n].data(), selected == n))
+                    selected = n;
+            }
+            fog_parameters.m_fog_type = selected;
+            ImGui::TreePop();
+        }
+        ImGui::SliderFloat("fog density", &fog_parameters.m_fog_density, 0.f, 1.f);
+        ImGui::SliderFloat("fog near plane", &fog_parameters.m_near_plane, 0.01f, 5.f);
+        ImGui::SliderFloat("fog far plane", &fog_parameters.m_far_plane, 10.f, 300.f);
+        ImGui::ColorEdit3("background color",&fog_parameters.m_background_color.r);
+}
+
+void update_outline_UI(OutlineParameters& outline_parameters){
+    ImGui::Checkbox("Outline",&outline_parameters.m_outline_is_activated);
+    if(outline_parameters.m_outline_is_activated){
+        ImGui::SliderFloat("threshold", &outline_parameters.m_threshold, 0.f, 1.f);
+        ImGui::ColorEdit3("outline color", &outline_parameters.m_outline_color.x);
+    }
+}
+
+void update_post_process_GUI(PostProcessParameters& post_process_parameters){
+    if(ImGui::CollapsingHeader("Post Processing")){
+        update_fog_UI(post_process_parameters.m_fog_param);
+        update_outline_UI(post_process_parameters.m_outline_param);
+    }
+};
+
+void update_GUI(BoidGroupParameters& boid_parameters,PostProcessParameters& post_process_parameters){
+    update_boid_GUI(boid_parameters);
+    update_post_process_GUI(post_process_parameters);
+};
+
+
 struct Application {
     p6::Context ctx = p6::Context{{.title = "Boids"}};
     MovementInput input = MovementInput{};
@@ -79,45 +136,16 @@ struct Application {
 
             // TO DO : GUI Window in Function
             ImGui::Begin("Parameters");
-            if(ImGui::CollapsingHeader("Boids Parameters"))
-            {
-                ImGui::SliderInt("Number of boids", &GUI.m_boid_nb, 0, 100);
-                ImGui::SliderFloat("Cohesion", &GUI.m_cohesion, 0.f, 1.f);
-                ImGui::SliderFloat("Separation", &GUI.m_separation, 0.f, 1.f);
-                ImGui::SliderFloat("Alignment", &GUI.m_alignment, 0.f, 1.f);
-                ImGui::SliderFloat("Visual range", &GUI.m_radius, 0.f, 0.5f);
-                ImGui::Checkbox("Display visual range", &GUI.m_display_visual_range);
-                // ImGui::SliderFloat("Mouse follow factor", &follow_mouse_factor, 0.f, 1.f);
-            }
-
             ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
 
-            if(ImGui::CollapsingHeader("Post Processing")){
-                if (ImGui::TreeNode("type of fog"))
-                    {
-                        std::vector<std::string> fogs_type_name{"squared exponential", "exponential","linear"};
-
-                        static int selected = post_processGUI.m_fog_type;
-                        for (int n = 0; n < 3; n++)
-                        {
-                            if (ImGui::Selectable(fogs_type_name[n].data(), selected == n))
-                                selected = n;
-                        }
-                        post_processGUI.m_fog_type = selected;
-                        ImGui::TreePop();
-                    }
-                ImGui::SliderFloat("fog density", &post_processGUI.m_fog_density, 0.f, 1.f);
-                ImGui::SliderFloat("fog near plane", &post_processGUI.m_near_plane, 0.01f, 5.f);
-                ImGui::SliderFloat("fog far plane", &post_processGUI.m_far_plane, 10.f, 300.f);
-                ImGui::ColorPicker4("background color",&post_processGUI.m_background_color.r);
-            }
+            update_GUI(GUI,post_processGUI);
             ImGui::End();
 
             MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI);                                                 // Retrieve GUI slider and button changes
             MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
 
-            MainScene.drawScene(ctx, m_car, m_box);
+            MainScene.drawFinaleScene(ctx, m_car, m_box);
 
         };
         ctx.maximize_window();
@@ -126,3 +154,5 @@ struct Application {
 
 
 };
+
+
