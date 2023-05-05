@@ -15,12 +15,7 @@ struct OutlineParameters{
 };
 
 struct PostProcessParameters {
-    // float m_fog_density = 0.05f;
-    // int m_fog_type = 0; // 2 linear / 1 exp / 0 sqrt exp
-    // float m_near_plane = 0.1f;
-    // float m_far_plane = 100.f;
-    // glm::vec3 m_background_color{0.};
-
+    bool m_is_post_process_activated = false;
     FogParameters m_fog_param{};
     OutlineParameters m_outline_param{};
 };
@@ -118,6 +113,7 @@ public:
 
 
 void PostProcess::update_from_GUI_parameters(PostProcessParameters parameters){
+    if(!parameters.m_is_post_process_activated)return;
     update_fog_from_GUI_parameters(parameters.m_fog_param);
     update_outline_from_GUI_parameters(parameters.m_outline_param);
 };

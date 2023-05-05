@@ -47,9 +47,14 @@ void update_outline_UI(OutlineParameters& outline_parameters){
 }
 
 void update_post_process_GUI(PostProcessParameters& post_process_parameters){
-    if(ImGui::CollapsingHeader("Post Processing")){
-        update_fog_UI(post_process_parameters.m_fog_param);
-        update_outline_UI(post_process_parameters.m_outline_param);
+    if (ImGui::CollapsingHeader("Post Processing")){
+        ImGui::Checkbox("active",&post_process_parameters.m_is_post_process_activated);
+        
+        if(post_process_parameters.m_is_post_process_activated){
+            ImGui::Spacing();
+            update_fog_UI(post_process_parameters.m_fog_param);
+            update_outline_UI(post_process_parameters.m_outline_param);
+        }
     }
 };
 
@@ -145,8 +150,11 @@ struct Application {
             MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
 
-            MainScene.drawFinaleScene(ctx, m_car, m_box);
-
+            if(post_processGUI.m_is_post_process_activated)
+                MainScene.drawFinaleScene(ctx, m_car, m_box);
+            else
+                MainScene.drawScene(ctx, m_car, m_box);
+        
         };
         ctx.maximize_window();
         ctx.start();
