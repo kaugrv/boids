@@ -1,25 +1,26 @@
 #pragma once
+
 #include "p6/p6.h"
-struct FogParameters{
-    float m_fog_density = 0.05f;
-    int m_fog_type = 0; // 2 linear / 1 exp / 0 sqrt exp
-    float m_near_plane = 0.1f;
-    float m_far_plane = 100.f;
+
+struct FogParameters {
+    float     m_fog_density = 0.05f;
+    int       m_fog_type    = 0; // 2 linear / 1 exp / 0 sqrt exp
+    float     m_near_plane  = 0.1f;
+    float     m_far_plane   = 100.f;
     glm::vec3 m_background_color{0.};
 };
 
-struct OutlineParameters{
-    bool m_outline_is_activated = false;
-    float m_threshold = 0.5f;
+struct OutlineParameters {
+    bool      m_outline_is_activated = false;
+    float     m_threshold            = 0.5f;
     glm::vec3 m_outline_color{1.};
 };
 
 struct PostProcessParameters {
-    bool m_is_post_process_activated = false;
-    FogParameters m_fog_param{};
+    bool              m_is_post_process_activated = false;
+    FogParameters     m_fog_param{};
     OutlineParameters m_outline_param{};
 };
-
 
 class QuadPostProcess {
 public:
@@ -104,32 +105,33 @@ public:
     FrameBuffer     m_frame_buffer;
 
     PostProcess(p6::Context& ctx)
-        : m_shader(p6::load_shader("../src/3D_RENDER/shaders/post_process.vs.glsl", "../src/3D_RENDER/shaders/post_process.fs.glsl")), m_quad(), m_frame_buffer(ctx){};
+        : m_shader(p6::load_shader("../src/shaders/post_process.vs.glsl", "../src/shaders/post_process.fs.glsl")), m_quad(), m_frame_buffer(ctx){};
 
     void update_from_GUI_parameters(PostProcessParameters parameters);
     void update_fog_from_GUI_parameters(FogParameters fog_param);
     void update_outline_from_GUI_parameters(OutlineParameters outline_param);
 };
 
-
-void PostProcess::update_from_GUI_parameters(PostProcessParameters parameters){
-    if(!parameters.m_is_post_process_activated)return;
+void PostProcess::update_from_GUI_parameters(PostProcessParameters parameters)
+{
+    if (!parameters.m_is_post_process_activated)
+        return;
     update_fog_from_GUI_parameters(parameters.m_fog_param);
     update_outline_from_GUI_parameters(parameters.m_outline_param);
 };
 
-void PostProcess::update_fog_from_GUI_parameters(FogParameters fog_param){
-    m_shader.set("near_plane",fog_param.m_near_plane);
-    m_shader.set("far_plane",fog_param.m_far_plane);
-    m_shader.set("fog_type",fog_param.m_fog_type);
-    m_shader.set("fog_density",0.1f*fog_param.m_fog_density);
-    m_shader.set("fog_background_color",fog_param.m_background_color);
+void PostProcess::update_fog_from_GUI_parameters(FogParameters fog_param)
+{
+    m_shader.set("near_plane", fog_param.m_near_plane);
+    m_shader.set("far_plane", fog_param.m_far_plane);
+    m_shader.set("fog_type", fog_param.m_fog_type);
+    m_shader.set("fog_density", 0.1f * fog_param.m_fog_density);
+    m_shader.set("fog_background_color", fog_param.m_background_color);
 };
 
-void PostProcess::update_outline_from_GUI_parameters(OutlineParameters outline_param){
-    m_shader.set("outline_color",outline_param.m_outline_color);
-    m_shader.set("outline_is_activated",outline_param.m_outline_is_activated);
-    m_shader.set("threshold",outline_param.m_threshold);
+void PostProcess::update_outline_from_GUI_parameters(OutlineParameters outline_param)
+{
+    m_shader.set("outline_color", outline_param.m_outline_color);
+    m_shader.set("outline_is_activated", outline_param.m_outline_is_activated);
+    m_shader.set("threshold", outline_param.m_threshold);
 };
-
-

@@ -4,11 +4,13 @@
 #include "Boid.hpp"
 #include "p6/p6.h"
 
-glm::vec3 random_vec3(float min, float max) {
+glm::vec3 random_vec3(float min, float max)
+{
     return glm::vec3(p6::random::number(min, max), p6::random::number(min, max), p6::random::number(min, max));
 }
 
-static Boid generate_random_boid() {
+static Boid generate_random_boid()
+{
     return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(0.5f, 0.5f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
@@ -59,7 +61,7 @@ public:
     }
 
     // Cohesion, Seperation & Alignment return the average direction to all the neighbours
-    glm::vec3 cohesion(const Boid& boid) 
+    glm::vec3 cohesion(const Boid& boid)
     {
         if (get_neighbours(boid).empty())
             return glm::vec3(0);
@@ -77,7 +79,7 @@ public:
         return glm::normalize(cohesion_vector / static_cast<float>(neighbour_count)) * m_behavior.m_cohesion;
     }
 
-    glm::vec3 separation(const Boid& boid) 
+    glm::vec3 separation(const Boid& boid)
     {
         if (get_neighbours(boid).empty())
             return glm::vec3(0);
@@ -98,7 +100,7 @@ public:
         return glm::normalize(separation_vector / static_cast<float>(neighbour_count)) * m_behavior.m_separation;
     }
 
-    glm::vec3 alignment(const Boid& boid) 
+    glm::vec3 alignment(const Boid& boid)
     {
         if (get_neighbours(boid).empty())
             return glm::vec3(0);
@@ -127,7 +129,7 @@ public:
 
             const glm::vec3 normal = obstacle.get_normal(boid.m_position);
 
-            boid.m_velocity += avoid_strength*delta_time * normal / dist;
+            boid.m_velocity += avoid_strength * delta_time * normal / dist;
 
             boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
         }
@@ -139,11 +141,11 @@ public:
                 return;
             }
 
-            const glm::vec3 normal = obstacle.get_normal( boid.m_position);
+            const glm::vec3 normal = obstacle.get_normal(boid.m_position);
 
             boid.m_velocity += delta_time * normal / abs_dist;
 
-            boid.m_velocity = glm::normalize(boid.m_velocity) *  boid.m_speed;
+            boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
         }
     }
 
@@ -173,7 +175,6 @@ public:
         for (auto& boid : m_boids)
         {
             boid.set_direction(cohesion(boid) + separation(boid) + alignment(boid) + boid.m_direction);
-            
 
             // Check collisions with all obstacles of the scene (including bounds)
             for (auto const& obstacle : obstacles)

@@ -132,8 +132,7 @@ public:
     Mesh()                 = default;
     Mesh(const Mesh& mesh) = default;
 
-    ~Mesh()
-    {
+    ~Mesh(){
         // glDeleteBuffers(1, &m_vbo);
         // glDeleteVertexArrays(1, &m_vao);
     };

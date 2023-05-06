@@ -11,10 +11,9 @@
 #include "glm/fwd.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "./Input/movement_input.hpp"
 #include "glm/gtx/transform.hpp"
-#include "movement_input.hpp"
 #include "p6/p6.h"
-
 
 class TrackballCamera {
 private:

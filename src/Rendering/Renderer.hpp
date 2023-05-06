@@ -1,19 +1,18 @@
 #pragma once
 
 #include <vector>
-#include "./BOIDS/BoidGroup.hpp"
-#include "./BOIDS/Sdf.hpp"
-#include "3D_RENDER/light.hpp"
-#include "3D_RENDER/post_process.hpp"
+#include "./Boids/BoidGroup.hpp"
+#include "./Camera/free_camera.hpp"
+#include "./Camera/track_ball_camera.hpp"
+#include "./Input/movement_input.hpp"
+#include "Light.hpp"
 #include "Material.hpp"
 #include "Mesh.hpp"
 #include "Object3D.hpp"
-#include "free_camera.hpp"
+#include "PostProcessing/post_process.hpp"
+#include "Sdf.hpp"
 #include "glm/gtx/transform.hpp"
-#include "light.hpp"
-#include "movement_input.hpp"
 #include "shader_program.hpp"
-#include "track_ball_camera.hpp"
 
 struct ObjectsInScene {
     BoidGroup m_group_of_boids{};
@@ -42,7 +41,7 @@ struct Scene3D {
 
     void update_cameras(const MovementInput& input, float delta_time)
     {
-        freecam_is_used ?  m_freeCam.updateFreeCamera(delta_time, input) : m_trackBallCamera.updateTrackBallCamera(input.m_mouse.delta, input.m_mouse.is_left_button_pressed, input.m_mouse.is_right_button_pressed);
+        freecam_is_used ? m_freeCam.updateFreeCamera(delta_time, input) : m_trackBallCamera.updateTrackBallCamera(input.m_mouse.delta, input.m_mouse.is_left_button_pressed, input.m_mouse.is_right_button_pressed);
     }
 
     glm::mat4 getViewMatrix()

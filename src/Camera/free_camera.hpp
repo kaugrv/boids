@@ -7,8 +7,8 @@
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
 #define GLFW_INCLUDE_NONE
+#include "./Input/movement_input.hpp"
 #include "glm/gtx/transform.hpp"
-#include "movement_input.hpp"
 #include "p6/p6.h"
 
 #define PI 3.149592
