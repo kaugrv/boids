@@ -1,6 +1,6 @@
 # Blender 3.5.1
 # www.blender.org
-mtllib cube.mtl
+mtllib ../../assets/models/cube.mtl
 o Cube
 v 1.000000 1.000000 -1.000000
 v 1.000000 -1.000000 -1.000000

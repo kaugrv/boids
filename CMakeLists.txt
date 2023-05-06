@@ -45,3 +45,8 @@ add_subdirectory(lib/p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
 set(P6_RAW_OPENGL_MODE ON CACHE BOOL "")
 target_compile_definitions(p6 PUBLIC "P6_RAW_OPENGL_MODE")
+
+# ---Add tinyobj---
+add_subdirectory(lib/tinyobjloader)
+target_link_libraries(${PROJECT_NAME} PRIVATE tinyobjloader)
+

@@ -4,7 +4,7 @@
 #include "glimac/common.hpp"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "glimac/tiny_obj_loader.h"
+#include "../../lib/tinyobjloader/tiny_obj_loader.h"
 #include "p6/p6.h"
 
 void fill_vbo(GLuint& m_vbo, const int& vertex_count, const glimac::ShapeVertex* shape_data_pointer)

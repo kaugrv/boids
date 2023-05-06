@@ -5,11 +5,12 @@
 #include <cmath>
 #include <iostream>
 #include <utility>
-#include "glimac/tiny_obj_loader.h"
+#include "../../lib/tinyobjloader/tiny_obj_loader.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
 #include "p6/p6.h"
+
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
