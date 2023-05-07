@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <utility>
 #include "glimac/tiny_obj_loader.h"
 #include "glm/ext/matrix_clip_space.hpp"
@@ -35,4 +36,14 @@ struct Material {
 
     Material(const tinyobj::material_t& material)
         : parameters{glm::vec3(material.diffuse[0], material.diffuse[1], material.diffuse[2]), glm::vec3(material.specular[0], material.specular[1], material.specular[2]), glm::vec3(material.ambient[0], material.ambient[1], material.ambient[2]), material.shininess} {};
+};
+
+struct Materials {
+    std::vector<tinyobj::material_t> m_materials;
+
+    std::shared_ptr<p6::Shader> shader;
+
+    // Materials() = default;
+    Materials(std::vector<tinyobj::material_t>& materials)
+        : m_materials(materials){};
 };

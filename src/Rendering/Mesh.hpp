@@ -129,6 +129,7 @@ private:
     GLsizei vertex_count = 0;
 
 public:
+    std::vector<int> m_material_ids;
     Mesh()                 = default;
     Mesh(const Mesh& mesh) = default;
 
@@ -140,6 +141,11 @@ public:
     Mesh(const std::vector<tinyobj::shape_t>& shapes)
         : vertex_count(get_vertex_count_obj(shapes))
     {
+        for (const auto& shape : shapes)
+        {
+            m_material_ids.insert(m_material_ids.end(), shape.mesh.material_ids.begin(), shape.mesh.material_ids.end());
+        }
+
         fill_vbo_obj(m_vbo, shapes);
         fill_ibo_obj(m_ibo, shapes);
         setup_vao_obj(m_vao, m_vbo, m_ibo, get_vertex_count_obj(shapes));

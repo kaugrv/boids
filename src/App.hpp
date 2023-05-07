@@ -111,8 +111,9 @@ struct Application {
     BoidGroupParameters   GUI             = BoidGroupParameters{};
     PostProcessParameters post_processGUI = PostProcessParameters{};
 
-    std::vector<std::shared_ptr<Material>> list_material_used;
-    std::vector<std::shared_ptr<Mesh>>     list_mesh_used;
+    std::vector<std::shared_ptr<Mesh>>      list_mesh_used;
+    std::vector<std::shared_ptr<Material>>  list_material_used;
+    std::vector<std::shared_ptr<Materials>> materials_used;
 
     void initialize()
     {
@@ -136,32 +137,36 @@ struct Application {
         std::vector<tinyobj::shape_t>    car_shapes;
         std::vector<tinyobj::material_t> car_materials;
 
-        tinyobj::LoadObj(car_shapes, car_materials, "../assets/models/peugeot.obj", "../assets/models/peugeot.mtl");
+        tinyobj::LoadObj(car_shapes, car_materials, "../assets/models/peugeot.obj");
         Mesh car(car_shapes);
         list_mesh_used.push_back(std::make_shared<Mesh>(car));
 
         auto car_mat_ptr              = std::make_shared<Material>();
         car_mat_ptr.get()->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
-
         list_material_used.push_back(car_mat_ptr);
 
-        Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = list_material_used[0]};
+        Materials  mat(car_materials);
+        p6::Shader shader = p6::load_shader("../src/shaders/3D.vs.glsl", "../src/shaders/light.fs.glsl");
+        mat.shader        = std::make_shared<p6::Shader>(shader);
+        materials_used.push_back(std::make_shared<Materials>(mat));
+
+        Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = list_material_used[0], .m_materials = materials_used[0]};
         m_car = car_object;
 
         BoidGroup group_of_boids(1);
         MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
 
-        // Bounding Box Object
-        std::vector<tinyobj::shape_t>    box_shapes;
-        std::vector<tinyobj::material_t> box_materials;
-        tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
-        Mesh box_mesh(box_shapes);
-        auto box_material_ptr        = std::make_shared<Material>();
-        box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
-        list_material_used.push_back(box_material_ptr);
-        list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
-        Object3D box{.m_mesh = list_mesh_used[1], .m_material = list_material_used[1]};
-        m_box = box;
+        // // Bounding Box Object
+        // std::vector<tinyobj::shape_t>    box_shapes;
+        // std::vector<tinyobj::material_t> box_materials;
+        // tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
+        // Mesh box_mesh(box_shapes);
+        // auto box_material_ptr        = std::make_shared<Material>();
+        // box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
+        // list_material_used.push_back(box_material_ptr);
+        // list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
+        // Object3D box{.m_mesh = list_mesh_used[1], .m_material = list_material_used[1]};
+        // m_box = box;
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
         MainScene.add_obstacle(new Box(bounds));
@@ -191,9 +196,9 @@ struct Application {
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
 
             if (post_processGUI.m_is_post_process_activated)
-                MainScene.drawFinaleScene(ctx, m_car, m_box);
+                MainScene.drawFinaleScene(ctx, m_car);
             else
-                MainScene.drawScene(ctx, m_car, m_box);
+                MainScene.drawScene(ctx, m_car);
         };
         ctx.maximize_window();
         ctx.start();

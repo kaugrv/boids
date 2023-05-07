@@ -50,6 +50,18 @@ void set_material(p6::Shader& shader, const Material& material)
     shader.set("uTexture", material.texture);
 }
 
+void set_multi_material(p6::Shader& shader, const Materials& materials, int index)
+{
+    tinyobj::material_t mat = materials.m_materials[index];
+    glm::vec3           Kd  = glm::vec3(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]);
+    glm::vec3           Ks  = glm::vec3(mat.specular[0], mat.specular[1], mat.specular[2]);
+    shader.set("K_d", Kd);
+    shader.set("K_s", Ks);
+
+    shader.set("shininess", mat.shininess);
+    shader.set("alpha", static_cast<float>(1.));
+}
+
 template<typename T> // works for point and directionnal light
 void send_light(p6::Shader& shader, const std::vector<T>& list_light, const glm::mat4& view_mat, const bool& is_directionnal)
 {
@@ -134,4 +146,11 @@ void set_blinn_phong(Material& material, const std::vector<PointLight>& list_lig
     set_matrix(material.shader, MV, ProjMatrix);
     set_material(material.shader, material);
     set_lights(material.shader, list_light, list_directionnal_light, MV);
+}
+
+void set_blinn_phong(int index, Materials& materials, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& MV, const glm::mat4& ProjMatrix)
+{
+    set_matrix(materials.shader, MV, ProjMatrix);
+    set_multi_material(materials.shader, materials, index);
+    set_lights(materials.shader, list_light, list_directionnal_light, MV);
 }
