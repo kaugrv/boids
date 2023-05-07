@@ -1,6 +1,5 @@
 
 
-#include "tiny_obj_loader.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <imgui.h>
 #include <algorithm>
@@ -12,8 +11,7 @@
 #include <utility>
 #include <vector>
 #include "doctest/doctest.h"
-// #include "glimac/tiny_obj_loader.h"
-#include "../lib/tinyobjloader/tiny_obj_loader.h"
+#include "glimac/tiny_obj_loader.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
@@ -135,45 +133,38 @@ struct Application {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Boids
-        tinyobj::attrib_t                car_attrib;
         std::vector<tinyobj::shape_t>    car_shapes;
         std::vector<tinyobj::material_t> car_materials;
 
-        std::string warn;
-        std::string err;
+        tinyobj::LoadObj(car_shapes, car_materials, "../assets/models/peugeot.obj", "../assets/models/peugeot.mtl");
+        Mesh car(car_shapes);
+        list_mesh_used.push_back(std::make_shared<Mesh>(car));
 
-        tinyobj::LoadObj(&car_attrib, &car_shapes, &car_materials, &warn, &err, "../assets/models/zimCreateArchive_2049OBJ.obj", "zimCreateArchive_2049OBJ.mtl");
+        auto car_mat_ptr              = std::make_shared<Material>();
+        car_mat_ptr.get()->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
 
-        std::cout << warn << std::endl;
-        std::cout << err << std::endl;
-        // Mesh car(car_shapes);
-        // list_mesh_used.push_back(std::make_shared<Mesh>(car));
+        list_material_used.push_back(car_mat_ptr);
 
-        // auto car_mat_ptr              = std::make_shared<Material>();
-        // car_mat_ptr.get()->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
+        Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = list_material_used[0]};
+        m_car = car_object;
 
-        // list_material_used.push_back(car_mat_ptr);
+        BoidGroup group_of_boids(1);
+        MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
 
-        // Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = list_material_used[0]};
-        // m_car = car_object;
+        // Bounding Box Object
+        std::vector<tinyobj::shape_t>    box_shapes;
+        std::vector<tinyobj::material_t> box_materials;
+        tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
+        Mesh box_mesh(box_shapes);
+        auto box_material_ptr        = std::make_shared<Material>();
+        box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
+        list_material_used.push_back(box_material_ptr);
+        list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
+        Object3D box{.m_mesh = list_mesh_used[1], .m_material = list_material_used[1]};
+        m_box = box;
 
-        // BoidGroup group_of_boids(1);
-        // MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
-
-        // // Bounding Box Object
-        // std::vector<tinyobj::shape_t>    box_shapes;
-        // std::vector<tinyobj::material_t> box_materials;
-        // tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
-        // Mesh box_mesh(box_shapes);
-        // auto box_material_ptr        = std::make_shared<Material>();
-        // box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
-        // list_material_used.push_back(box_material_ptr);
-        // list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
-        // Object3D box{.m_mesh = list_mesh_used[1], .m_material = list_material_used[1]};
-        // m_box = box;
-
-        // Box bounds{glm::vec3(0.), glm::vec3(1.), true};
-        // MainScene.add_obstacle(new Box(bounds));
+        Box bounds{glm::vec3(0.), glm::vec3(1.), true};
+        MainScene.add_obstacle(new Box(bounds));
     };
 
     void update()
@@ -195,14 +186,14 @@ struct Application {
             update_GUI(GUI, post_processGUI);
             ImGui::End();
 
-            // MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
-            // MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
-            // MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
+            MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
+            MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
+            MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
 
-            //     if (post_processGUI.m_is_post_process_activated)
-            //         MainScene.drawFinaleScene(ctx, m_car, m_box);
-            //     else
-            //         MainScene.drawScene(ctx, m_car, m_box);
+            if (post_processGUI.m_is_post_process_activated)
+                MainScene.drawFinaleScene(ctx, m_car, m_box);
+            else
+                MainScene.drawScene(ctx, m_car, m_box);
         };
         ctx.maximize_window();
         ctx.start();

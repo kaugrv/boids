@@ -1,7 +1,6 @@
 # Blender 3.3.1
 # www.blender.org
- mtllib ../../assets/models/2049.mtl
-
+mtllib 2049.mtl
 o zimCreateArchive_2049OBJ
 v 0.000299 0.031566 -0.131294
 v 0.000299 0.028552 -0.130048
