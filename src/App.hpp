@@ -111,11 +111,20 @@ struct Application {
     BoidGroupParameters   GUI             = BoidGroupParameters{};
     PostProcessParameters post_processGUI = PostProcessParameters{};
 
-    std::vector<std::shared_ptr<Material>> list_material_used;
-    std::vector<std::shared_ptr<Mesh>>     list_mesh_used;
+    std::vector<std::shared_ptr<p6::Shader>> list_shaders_used;
+    std::vector<std::shared_ptr<p6::Image>>  list_images_used;
+
+    // std::vector<Material> list_material_used;
+
+    std::vector<std::shared_ptr<Mesh>> list_mesh_used;
 
     void initialize()
     {
+        std::shared_ptr<p6::Shader> default_shader = std::make_shared<p6::Shader>(p6::load_shader("../src/shaders/3D.vs.glsl", "../src/shaders/light.fs.glsl"));
+
+        list_shaders_used.push_back(default_shader);
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/logo2.png")));
+
         // Create lights
         DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
         PointLight       point_light{.position = glm::vec3{0.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 0.1};
@@ -133,6 +142,7 @@ struct Application {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Boids
+
         std::vector<tinyobj::shape_t>    car_shapes;
         std::vector<tinyobj::material_t> car_materials;
 
@@ -140,12 +150,9 @@ struct Application {
         Mesh car(car_shapes);
         list_mesh_used.push_back(std::make_shared<Mesh>(car));
 
-        auto car_mat_ptr              = std::make_shared<Material>();
-        car_mat_ptr.get()->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 1.};
+        Material car_material(MaterialParameters{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
 
-        list_material_used.push_back(car_mat_ptr);
-
-        Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = list_material_used[0]};
+        Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = car_material};
         m_car = car_object;
 
         BoidGroup group_of_boids(1);
@@ -156,11 +163,9 @@ struct Application {
         std::vector<tinyobj::material_t> box_materials;
         tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
         Mesh box_mesh(box_shapes);
-        auto box_material_ptr        = std::make_shared<Material>();
-        box_material_ptr->parameters = {glm::vec3(0.2, 1., 0.2), glm::vec3(0.5), glm::vec3(0.5), 2., 0.5};
-        list_material_used.push_back(box_material_ptr);
+
         list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
-        Object3D box{.m_mesh = list_mesh_used[1], .m_material = list_material_used[1]};
+        Object3D box{.m_mesh = list_mesh_used[1], .m_material = car_material};
         m_box = box;
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};

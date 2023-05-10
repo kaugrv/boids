@@ -34,17 +34,17 @@ void set_matrix(p6::Shader& shader, const glm::mat4& MV, const glm::mat4& ProjMa
 
 void set_material(p6::Shader& shader, const Material& material)
 {
-    shader.set("K_d", material.parameters.diffuse);
-    shader.set("K_s", material.parameters.glossy);
-    shader.set("shininess", material.parameters.shininess);
-    shader.set("alpha", material.parameters.alpha);
-    shader.set("uTexture", material.texture);
+    shader.set("K_d", material.m_parameters.diffuse);
+    shader.set("K_s", material.m_parameters.glossy);
+    shader.set("shininess", material.m_parameters.shininess);
+    shader.set("alpha", material.m_parameters.alpha);
+    shader.set("uTexture", *material.m_texture);
 }
 
 void send_light_pos_uniform(p6::Shader& shader, const lightDatas& light_datas)
 {
-    GLint shader_id = shader.id();
-    uint  nb_light  = light_datas.list_color.size();
+    GLint        shader_id = shader.id();
+    unsigned int nb_light  = light_datas.list_color.size();
 
     GLuint w_i       = glad_glGetUniformLocation(shader_id, "w_i");
     GLuint L_i       = glad_glGetUniformLocation(shader_id, "L_i");
@@ -59,8 +59,8 @@ void send_light_pos_uniform(p6::Shader& shader, const lightDatas& light_datas)
 
 void send_light_dir_uniform(p6::Shader& shader, const lightDatas& light_datas)
 {
-    GLint shader_id = shader.id();
-    uint  nb_light  = light_datas.list_color.size();
+    GLint        shader_id = shader.id();
+    unsigned int nb_light  = light_datas.list_color.size();
 
     GLuint direction_i         = glad_glGetUniformLocation(shader_id, "direction_i");
     GLuint L_i_direction       = glad_glGetUniformLocation(shader_id, "L_i_direction");
@@ -122,7 +122,7 @@ lightDatas fill_light_data(const std::vector<T>& list_light, const glm::mat4& vi
 
 void set_blinn_phong(Material& material, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& MV, const glm::mat4& ProjMatrix)
 {
-    set_matrix(material.shader, MV, ProjMatrix);
-    set_material(material.shader, material);
-    set_lights(material.shader, list_light, list_directionnal_light, MV);
+    set_matrix(*material.m_shader, MV, ProjMatrix);
+    set_material(*material.m_shader, material);
+    set_lights(*material.m_shader, list_light, list_directionnal_light, MV);
 }
