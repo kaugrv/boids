@@ -105,9 +105,6 @@ struct Application {
     MovementInput input     = MovementInput{};
     Scene3D       MainScene = Scene3D(ctx);
 
-    Object3D m_car;
-    Object3D m_box;
-
     BoidGroupParameters   GUI             = BoidGroupParameters{};
     PostProcessParameters post_processGUI = PostProcessParameters{};
 
@@ -153,7 +150,7 @@ struct Application {
         Material car_material(MaterialParameters{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
 
         Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = car_material};
-        m_car = car_object;
+        MainScene.add_object_3D(car_object);
 
         BoidGroup group_of_boids(1);
         MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
@@ -166,7 +163,7 @@ struct Application {
 
         list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
         Object3D box{.m_mesh = list_mesh_used[1], .m_material = car_material};
-        m_box = box;
+        MainScene.add_object_3D(box);
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
         MainScene.add_obstacle(new Box(bounds));
@@ -196,9 +193,9 @@ struct Application {
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
 
             if (post_processGUI.m_is_post_process_activated)
-                MainScene.drawFinaleScene(ctx, m_car, m_box);
+                MainScene.drawFinaleScene(ctx);
             else
-                MainScene.drawScene(ctx, m_car, m_box);
+                MainScene.drawScene(ctx);
         };
         ctx.maximize_window();
         ctx.start();

@@ -15,7 +15,10 @@
 #include "shader_program.hpp"
 
 struct ObjectsInScene {
-    BoidGroup m_group_of_boids{};
+    BoidGroup                              m_group_of_boids{};
+    std::vector<std::unique_ptr<Obstacle>> m_obstacles{};
+
+    std::vector<Object3D> m_objects_3D{};
 };
 
 struct Scene3D {
@@ -30,8 +33,6 @@ struct Scene3D {
 
     // Objects in the scene
     ObjectsInScene m_objects_in_scene{};
-
-    std::vector<std::unique_ptr<Obstacle>> m_Obstacles{};
 
     PostProcess m_post_process;
 
@@ -71,37 +72,43 @@ struct Scene3D {
 
     auto get_obstacles() const
     {
-        return &m_Obstacles;
+        return &m_objects_in_scene.m_obstacles;
     }
 
     void add_obstacle(Obstacle* obstacle_ptr)
     {
         if (obstacle_ptr != nullptr)
-            m_Obstacles.push_back(std::unique_ptr<Obstacle>(obstacle_ptr));
+            m_objects_in_scene.m_obstacles.push_back(std::unique_ptr<Obstacle>(obstacle_ptr));
     }
 
     void remove_obstacle()
     {
-        m_Obstacles.pop_back();
+        m_objects_in_scene.m_obstacles.pop_back();
     }
 
-    void drawScene(const p6::Context& ctx, Object3D& object, Object3D& bound_box)
+    void add_object_3D(Object3D& object)
+    {
+        m_objects_in_scene.m_objects_3D.push_back(object);
+    }
+
+    void drawScene(const p6::Context& ctx)
     {
         for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids)
         {
-            object.m_material.m_shader->use();
+            m_objects_in_scene.m_objects_3D[0].m_material.m_shader->use();
             glm::mat4 MVMatrix = getViewMatrix() * boid.getModelMatrix();
-            set_blinn_phong(object.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-            drawMesh(*object.m_mesh);
+            set_blinn_phong(m_objects_in_scene.m_objects_3D[0].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+            drawMesh(*m_objects_in_scene.m_objects_3D[0].m_mesh);
         }
 
-        bound_box.m_material.m_shader->use();
+        // TO DO : obstacle has his own object 3D and model matrix and do a for loop
+        m_objects_in_scene.m_objects_3D[1].m_material.m_shader->use();
         glm::mat4 MVMatrix = getViewMatrix() * glm::mat4(1.);
-        set_blinn_phong(bound_box.m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*bound_box.m_mesh);
+        set_blinn_phong(m_objects_in_scene.m_objects_3D[1].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(*m_objects_in_scene.m_objects_3D[1].m_mesh);
     }
 
-    void drawFinaleScene(const p6::Context& ctx, Object3D& object, Object3D& bound_box)
+    void drawFinaleScene(const p6::Context& ctx)
     {
         // POST PROCESS TEST
         //     first I bind my frame buffer
@@ -110,7 +117,7 @@ struct Scene3D {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
         glEnable(GL_DEPTH_TEST);
 
-        drawScene(ctx, object, bound_box);
+        drawScene(ctx);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
         glDisable(GL_DEPTH_TEST);
