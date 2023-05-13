@@ -7,36 +7,6 @@
 #include "glimac/tiny_obj_loader.h"
 #include "p6/p6.h"
 
-void fill_vbo(GLuint& m_vbo, const int& vertex_count, const glimac::ShapeVertex* shape_data_pointer)
-{
-    glGenBuffers(1, &m_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glimac::ShapeVertex), shape_data_pointer, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void setup_vao(GLuint& m_vao, const GLuint& m_vbo)
-{
-    glGenVertexArrays(1, &m_vao);
-    glBindVertexArray(m_vao);
-
-    const GLuint VERTEX_ATTR_POSITION  = 0;
-    const GLuint NORMAL_ATTR_POSITION  = 1;
-    const GLuint TEXTURE_ATTR_POSITION = 2;
-
-    glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
-    glEnableVertexAttribArray(NORMAL_ATTR_POSITION);
-    glEnableVertexAttribArray(TEXTURE_ATTR_POSITION);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-
-    glVertexAttribPointer(VERTEX_ATTR_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)offsetof(glimac::ShapeVertex, position));
-    glVertexAttribPointer(NORMAL_ATTR_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)offsetof(glimac::ShapeVertex, normal));
-    glVertexAttribPointer(TEXTURE_ATTR_POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(glimac::ShapeVertex), (const GLvoid*)offsetof(glimac::ShapeVertex, texCoords));
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
 
 void fill_vbo_obj(GLuint& m_vbo, const std::vector<tinyobj::shape_t>& shapes)
 {
@@ -58,8 +28,14 @@ void fill_vbo_obj(GLuint& m_vbo, const std::vector<tinyobj::shape_t>& shapes)
             vertices.push_back(normals[i + 1]);
             vertices.push_back(normals[i + 2]);
 
-            vertices.push_back(texcoords[i / 3]);
-            vertices.push_back(texcoords[i / 3 + 1]);
+            if(!texcoords.empty()) {
+                vertices.push_back(texcoords[i / 3]);
+                vertices.push_back(texcoords[i / 3 + 1]);
+            }
+            else {
+                vertices.push_back(0);
+                vertices.push_back(0);
+            }
         }
     }
 
@@ -128,8 +104,9 @@ private:
     GLuint  m_ibo;
     GLsizei vertex_count = 0;
 
+    std::vector<int> materials_ids;
+
 public:
-    std::vector<int> m_material_ids;
     Mesh()                 = default;
     Mesh(const Mesh& mesh) = default;
 
@@ -141,11 +118,12 @@ public:
     Mesh(const std::vector<tinyobj::shape_t>& shapes)
         : vertex_count(get_vertex_count_obj(shapes))
     {
+
         for (const auto& shape : shapes)
         {
-            m_material_ids.insert(m_material_ids.end(), shape.mesh.material_ids.begin(), shape.mesh.material_ids.end());
+            materials_ids.insert(materials_ids.end(), shape.mesh.material_ids.begin(), shape.mesh.material_ids.end());
         }
-
+        
         fill_vbo_obj(m_vbo, shapes);
         fill_ibo_obj(m_ibo, shapes);
         setup_vao_obj(m_vao, m_vbo, m_ibo, get_vertex_count_obj(shapes));
@@ -175,4 +153,8 @@ void drawMesh(Mesh& mesh)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.get_ibo());
     glDrawElements(GL_TRIANGLES, mesh.get_vertex_count(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+}
+
+void drawSameMaterialMesh(Mesh& mesh) {
+
 }

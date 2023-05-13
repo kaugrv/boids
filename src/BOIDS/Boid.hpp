@@ -61,6 +61,8 @@ struct Boid {
         // ModelMatrix      = glm::rotate(ModelMatrix, glm::radians(angleY), glm::vec3(0.0f, 1.0f, 0.0f));
         // float angleX = atan2(m_direction.y, m_direction.z);
         // ModelMatrix  = glm::rotate(ModelMatrix, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
+        
+        ModelMatrix = glm::scale(ModelMatrix, m_scale);
 
         return ModelMatrix;
     }
