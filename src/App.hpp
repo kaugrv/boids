@@ -120,26 +120,33 @@ struct Application {
         std::shared_ptr<p6::Shader> default_shader = std::make_shared<p6::Shader>(p6::load_shader("../src/shaders/3D.vs.glsl", "../src/shaders/light.fs.glsl"));
 
         list_shaders_used.push_back(default_shader);
-        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/logo2.png")));
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/metal.jpg")));
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/sky.jpg")));
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/building.jpg")));
 
         // Create lights
-        DirectionalLight dir_light{.direction = glm::vec3(0., -0.5, 0.), .color = glm::vec3(0.2, 0.58, 0.6), .intensity = 1.};
-        PointLight       point_light{.position = glm::vec3{0.}, .color = glm::vec3(0.1, 0.7, 0.9), .intensity = 0.1};
+        DirectionalLight dir_light{.direction = glm::vec3(1., 1., 0.), .color = glm::vec3(1., 1., 1.), .intensity = 2.};
+        DirectionalLight dir_light2{.direction = glm::vec3(-1., 1., 0.), .color = glm::vec3(1., 1., 1.), .intensity = 2.};
+        PointLight       point_light{.position = glm::vec3{0., 1., 0.}, .color = glm::vec3(0.9, 0.7, 0.8), .intensity = 0.2};
 
         // Push them into the scene
         MainScene.add_dir_light(dir_light);
+        MainScene.add_dir_light(dir_light2);
         MainScene.add_point_light(point_light);
 
         // GL Options
+        glEnable(GL_CULL_FACE);
+         glCullFace(GL_BACK);
+        // glDisable(GL_CULL_FACE);
+
         glEnable(GL_DEPTH_TEST);
-        // glEnable(GL_CULL_FACE);
-        //  glCullFace(GL_BACK);
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Boids
 
+        // Boids
         std::vector<tinyobj::shape_t>    car_shapes;
         std::vector<tinyobj::material_t> car_materials;
 
@@ -147,13 +154,30 @@ struct Application {
         Mesh car(car_shapes);
         list_mesh_used.push_back(std::make_shared<Mesh>(car));
 
-        Material car_material(MaterialParameters{.diffuse = glm::vec3(0.2, 1., 0.2), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
+        Material car_material(MaterialParameters{.diffuse = glm::vec3(0.5, 0.5, 0.5), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
 
         Object3D car_object{.m_mesh = list_mesh_used[0], .m_material = car_material};
         MainScene.add_object_3D(car_object);
 
         BoidGroup group_of_boids(1);
         MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
+
+        // Surveyor
+        std::vector<tinyobj::shape_t>    surveyor_shapes;
+        std::vector<tinyobj::material_t> surveyor_materials;
+
+        tinyobj::LoadObj(surveyor_shapes, surveyor_materials, "../assets/models/2049.obj");
+        Mesh surveyor_mesh(surveyor_shapes);
+        list_mesh_used.push_back(std::make_shared<Mesh>(surveyor_mesh));
+
+        Material surveyor_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 0.8), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
+
+        Object3D surveyor_object{.m_mesh =  list_mesh_used[1], .m_material = car_material};
+        MainScene.add_object_3D(surveyor_object);
+
+        Surveyor surveyor;
+        MainScene.m_objects_in_scene.m_surveyor = surveyor;
+
 
         // Bounding Box Object
         std::vector<tinyobj::shape_t>    box_shapes;
@@ -162,17 +186,33 @@ struct Application {
         Mesh box_mesh(box_shapes);
 
         list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
-        Object3D box{.m_mesh = list_mesh_used[1], .m_material = car_material};
+
+        Material box_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 0.5}, list_shaders_used[0], list_images_used[1]);
+
+        Object3D box{.m_mesh = list_mesh_used[2], .m_material = box_material};
         MainScene.add_object_3D(box);
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
         MainScene.add_obstacle(new Box(bounds));
+
+
+
+        // One Obstacle (building)
+        Material building_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 0., .alpha = 1.}, list_shaders_used[0], list_images_used[2]);
+
+        Object3D building{.m_mesh = list_mesh_used[2], .m_material = building_material};
+        MainScene.add_object_3D(building);
+
+        Box building_obstacle{glm::vec3(0., -0.5, 0.), glm::vec3(0.2,0.5,0.2), false};
+        MainScene.add_obstacle(new Box(building_obstacle));
+
+
     };
 
     void update()
     {
         ctx.update = [&]() {
-            ctx.background(p6::Color{0.f, 0.f, 0.5f});
+            ctx.background(p6::Color{0.f, 0.f, 0.3f});
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Input update
@@ -191,6 +231,7 @@ struct Application {
             MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
             MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
+            MainScene.m_objects_in_scene.m_surveyor.update_position(ctx.delta_time(), input.m_keyboard);
 
             if (post_processGUI.m_is_post_process_activated)
                 MainScene.drawFinaleScene(ctx);

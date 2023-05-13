@@ -13,10 +13,12 @@
 #include "Sdf.hpp"
 #include "glm/gtx/transform.hpp"
 #include "shader_program.hpp"
+#include "Surveyor/Surveyor.hpp"
 
 struct ObjectsInScene {
     BoidGroup                              m_group_of_boids{};
     std::vector<std::unique_ptr<Obstacle>> m_obstacles{};
+    Surveyor m_surveyor{};
 
     std::vector<Object3D> m_objects_3D{};
 };
@@ -101,11 +103,24 @@ struct Scene3D {
             drawMesh(*m_objects_in_scene.m_objects_3D[0].m_mesh);
         }
 
-        // TO DO : obstacle has his own object 3D and model matrix and do a for loop
+        // Surveyor
         m_objects_in_scene.m_objects_3D[1].m_material.m_shader->use();
-        glm::mat4 MVMatrix = getViewMatrix() * glm::mat4(1.);
+        glm::mat4 MVMatrix = getViewMatrix() * m_objects_in_scene.m_surveyor.getModelMatrix();
         set_blinn_phong(m_objects_in_scene.m_objects_3D[1].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
         drawMesh(*m_objects_in_scene.m_objects_3D[1].m_mesh);
+
+        
+        m_objects_in_scene.m_objects_3D[3].m_material.m_shader->use();
+        MVMatrix = getViewMatrix() * glm::scale(glm::translate(glm::mat4(1.), glm::vec3(0., -0.5, 0.)), glm::vec3(0.2,0.5,0.2));
+        set_blinn_phong(m_objects_in_scene.m_objects_3D[3].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(*m_objects_in_scene.m_objects_3D[3].m_mesh);
+
+        // TO DO : obstacle has his own object 3D and model matrix and do a for loop
+        m_objects_in_scene.m_objects_3D[2].m_material.m_shader->use();
+        MVMatrix = getViewMatrix() * glm::mat4(1.);
+        set_blinn_phong(m_objects_in_scene.m_objects_3D[2].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(*m_objects_in_scene.m_objects_3D[2].m_mesh);
+
     }
 
     void drawFinaleScene(const p6::Context& ctx)
