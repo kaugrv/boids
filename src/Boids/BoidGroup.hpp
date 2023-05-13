@@ -18,7 +18,7 @@ struct BoidGroupParameters {
     float m_cohesion{1.};
     float m_separation{0.};
     float m_alignment{0.};
-    float m_radius{20.};
+    float m_radius{0.5};
     int   m_boid_nb{1};
     bool  m_display_visual_range{false};
 };
@@ -136,7 +136,7 @@ public:
         else
         {
             const float abs_dist = std::fabs(obstacle.get_distance(boid.m_position));
-            if (abs_dist >= 3.)
+            if (abs_dist >= 0.3)
             {
                 return;
             }
@@ -168,8 +168,8 @@ public:
 
     void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles)
     {
-        float avoid_distance = 0.2;
-        float avoid_strength = 200.;
+        float avoid_distance = 0.3;
+        float avoid_strength = 500.;
         update_boid_number();
 
         for (auto& boid : m_boids)
