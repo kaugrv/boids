@@ -10,18 +10,18 @@ Wendy Gervais & Tristan Debeaune
 
 
 ## GUI
-- [ ] Dear ImGui  
+- [ X ] Dear ImGui  
 
 ##  Boids
-- [ ] Original 3D modelisation  
+- [X] Original 3D modelisation  
 - [ ] LODs
 
 ##  Environment
-- [ ] Textured cube  
-- [ ] Textured decor elements  
+- [X] Textured cube  
+- [X] Textured decor elements  
 
 ##  Surveyor
-- [ ] Original 3D modelisation  
+- [X] Original 3D modelisation  
 - [ ] 3rd person  
 - [ ] Ponctual Light
 
@@ -32,7 +32,7 @@ Wendy Gervais & Tristan Debeaune
 ##  Bonus
 - [ ] Complexe illumination model  
 - [ ] Day / Night cycle  
-- [ ] VFX : particles, fog, bloom...  
+- [X] VFX : particles, fog, bloom...  
 - [ ] Animated surveyor
 
 
