@@ -56,9 +56,8 @@ struct Boid {
 
         ModelMatrix = glm::translate(ModelMatrix, m_position);
 
-        ModelMatrix = glm::rotate(ModelMatrix, static_cast<float>(m_position.x*glm::radians(90.)), glm::vec3(0.,1.,0.));
-        ModelMatrix = glm::rotate(ModelMatrix,  static_cast<float>(m_position.y*glm::radians(-75.)), glm::vec3(1.,0.,0.));
-        ModelMatrix = glm::rotate(ModelMatrix,  static_cast<float>(m_position.z*glm::radians(45.)), glm::vec3(0.,0.,1.));
+        ModelMatrix = glm::rotate(ModelMatrix, static_cast<float>(m_position.x * glm::radians(90.)), glm::vec3(0., 1., 0.));
+        ModelMatrix = glm::rotate(ModelMatrix, static_cast<float>(m_position.y * glm::radians(-75.)), glm::vec3(1., 0., 0.));
 
         // glm::vec3 Z      = glm::vec3(0.0f, 0.0f, 1.0f);
         // float     angleY = glm::orientedAngle(Z, glm::normalize(glm::vec3(m_direction.x, 0.0f, m_direction.z)), glm::vec3(0.0f, 1.0f, 0.0f));

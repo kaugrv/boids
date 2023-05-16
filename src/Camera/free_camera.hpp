@@ -62,4 +62,9 @@ public:
     {
         return glm::perspective<float>(m_fov, ctx.aspect_ratio(), m_near, m_far);
     }
+
+    glm::vec3 get_position()
+    {
+        return m_Position;
+    }
 };

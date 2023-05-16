@@ -1,0 +1,33 @@
+
+*** These modified files were found in JOE when it aborted on Tue May 16 17:11:22 2023
+*** JOE was aborted by UNIX signal 1
+
+*** Fichier '/home/6ima2/wendy.gervais/Documents/boids/.git/COMMIT_EDITMSG'
+
+
+
+# Veuillez saisir le message de validation pour vos modifications. Les lignes
+# commençant par '#' seront ignorées, et un message vide abandonne la validation.
+#
+# Validateur : GERVAIS WENDY <wendy.gervais@heckel02.u-pem.fr>
+#
+# Sur la branche main
+# Votre branche est à jour avec 'origin/main'.
+#
+# Modifications qui seront validées :
+#	supprimé :        ../assets/models/peugeot2.obj
+#	modifié :         ../src/App.hpp
+#	modifié :         ../src/Boids/Boid.hpp
+#	modifié :         ../src/Camera/free_camera.cpp
+#	modifié :         ../src/Camera/free_camera.hpp
+#	modifié :         ../src/Rendering/Renderer.hpp
+#	modifié :         ../src/Surveyor/Surveyor.hpp
+#
+
+*** Fichier '(Sans nom)'
+/home/6ima2/wendy.gervais/Documents/boids/.git/MERGE_MSG
+/home/6ima2/wendy.gervais/Documents/boids/.git/COMMIT_EDITMSG
+
+*** Fichier '* Startup Log *'
+Traitement de '/etc/joe/editorrc'...Traitement de '/etc/joe/ftyperc'...Finished processing /etc/joe/ftyperc
+Finished processing /etc/joe/editorrc

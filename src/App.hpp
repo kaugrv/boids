@@ -135,16 +135,15 @@ struct Application {
         MainScene.add_point_light(point_light);
 
         // GL Options
-        glEnable(GL_CULL_FACE);
-         glCullFace(GL_BACK);
-        // glDisable(GL_CULL_FACE);
+        // glEnable(GL_CULL_FACE);
+        // glCullFace(GL_BACK);
+        glDisable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-         glEnable(GL_BLEND);
+        glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
         // Boids
         std::vector<tinyobj::shape_t>    car_shapes;
@@ -172,12 +171,11 @@ struct Application {
 
         Material surveyor_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 0.8), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
 
-        Object3D surveyor_object{.m_mesh =  list_mesh_used[1], .m_material = car_material};
+        Object3D surveyor_object{.m_mesh = list_mesh_used[1], .m_material = car_material};
         MainScene.add_object_3D(surveyor_object);
 
         Surveyor surveyor;
         MainScene.m_objects_in_scene.m_surveyor = surveyor;
-
 
         // Bounding Box Object
         std::vector<tinyobj::shape_t>    box_shapes;
@@ -195,18 +193,14 @@ struct Application {
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
         MainScene.add_obstacle(new Box(bounds));
 
-
-
         // One Obstacle (building)
         Material building_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 0., .alpha = 1.}, list_shaders_used[0], list_images_used[2]);
 
         Object3D building{.m_mesh = list_mesh_used[2], .m_material = building_material};
         MainScene.add_object_3D(building);
 
-        Box building_obstacle{glm::vec3(0., -0.5, 0.), glm::vec3(0.2,0.5,0.2), false};
+        Box building_obstacle{glm::vec3(0., -0.5, 0.), glm::vec3(0.2, 0.5, 0.2), false};
         MainScene.add_obstacle(new Box(building_obstacle));
-
-
     };
 
     void update()
@@ -231,7 +225,7 @@ struct Application {
             MainScene.m_objects_in_scene.m_group_of_boids.update_behavior(GUI); // Retrieve GUI slider and button changes
             MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
-            MainScene.m_objects_in_scene.m_surveyor.update_position(ctx.delta_time(), input.m_keyboard);
+            MainScene.m_objects_in_scene.m_surveyor.update_position(ctx.delta_time(), input.m_keyboard, MainScene.freecam_is_used, MainScene.m_freeCam.get_position());
 
             if (post_processGUI.m_is_post_process_activated)
                 MainScene.drawFinaleScene(ctx);
