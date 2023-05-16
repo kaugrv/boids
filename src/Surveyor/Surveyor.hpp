@@ -1,4 +1,3 @@
-
 #include <GLFW/glfw3.h>
 #include "../Input/movement_input.hpp"
 #include "glm/ext/matrix_transform.hpp"

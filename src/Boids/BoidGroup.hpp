@@ -11,7 +11,7 @@ glm::vec3 random_vec3(float min, float max)
 
 static Boid generate_random_boid()
 {
-    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(0.5f, 0.5f), glm::normalize(random_vec3(-1.f, 1.f)));
+    return Boid(random_vec3(-0.9f, 0.9f), p6::random::number(-1.f, 1.f), glm::normalize(random_vec3(-1.f, 1.f)));
 }
 
 struct BoidGroupParameters {
@@ -21,13 +21,12 @@ struct BoidGroupParameters {
     float m_radius{0.5};
     int   m_boid_nb{1};
     bool  m_display_visual_range{false};
+    int m_LOD{1};
 };
 
 class BoidGroup {
-private:
-    BoidGroupParameters m_behavior{};
-
 public:
+    BoidGroupParameters m_behavior{};
     std::vector<Boid> m_boids{};
 
     BoidGroup() = default;

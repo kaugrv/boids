@@ -14,10 +14,7 @@
 struct PointLight {
     glm::vec3 position;
     glm::vec3 color;
-
-    float intensity;
-
-    friend std::ostream& operator<<(std::ostream& os, const PointLight& cam);
+    float     intensity;
 };
 
 struct DirectionalLight {

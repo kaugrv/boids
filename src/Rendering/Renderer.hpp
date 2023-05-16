@@ -40,7 +40,10 @@ struct Scene3D {
 
     // Constructor
     Scene3D(p6::Context& ctx)
-        : m_trackBallCamera(-5, 0, 0), m_freeCam(), m_post_process(ctx){};
+        : m_trackBallCamera(-5, 0, 0), m_freeCam(), m_post_process(ctx){
+
+    };
+
 
     void update_cameras(const MovementInput& input, float delta_time)
     {
@@ -97,28 +100,29 @@ struct Scene3D {
     {
         for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids)
         {
-            m_objects_in_scene.m_objects_3D[0].m_material.m_shader->use();
+            m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].m_material.m_shader->use();
             glm::mat4 MVMatrix = getViewMatrix() * boid.getModelMatrix();
-            set_blinn_phong(m_objects_in_scene.m_objects_3D[0].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-            drawMesh(*m_objects_in_scene.m_objects_3D[0].m_mesh);
+            set_blinn_phong(m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+            drawMesh(*m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].m_mesh);
         }
 
         // Surveyor
-        m_objects_in_scene.m_objects_3D[1].m_material.m_shader->use();
+        m_objects_in_scene.m_objects_3D[4].m_material.m_shader->use();
         glm::mat4 MVMatrix = getViewMatrix() * m_objects_in_scene.m_surveyor.getModelMatrix();
-        set_blinn_phong(m_objects_in_scene.m_objects_3D[1].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*m_objects_in_scene.m_objects_3D[1].m_mesh);
+        set_blinn_phong(m_objects_in_scene.m_objects_3D[4].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(*m_objects_in_scene.m_objects_3D[4].m_mesh);
 
-        m_objects_in_scene.m_objects_3D[3].m_material.m_shader->use();
+        // Obstacle
+        m_objects_in_scene.m_objects_3D[5].m_material.m_shader->use();
         MVMatrix = getViewMatrix() * glm::scale(glm::translate(glm::mat4(1.), glm::vec3(0., -0.5, 0.)), glm::vec3(0.2, 0.5, 0.2));
-        set_blinn_phong(m_objects_in_scene.m_objects_3D[3].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*m_objects_in_scene.m_objects_3D[3].m_mesh);
+        set_blinn_phong(m_objects_in_scene.m_objects_3D[5].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(*m_objects_in_scene.m_objects_3D[5].m_mesh);
 
-        // TO DO : obstacle has his own object 3D and model matrix and do a for loop
-        m_objects_in_scene.m_objects_3D[2].m_material.m_shader->use();
+        // CUBE
+        m_objects_in_scene.m_objects_3D[0].m_material.m_shader->use();
         MVMatrix = getViewMatrix() * glm::mat4(1.);
-        set_blinn_phong(m_objects_in_scene.m_objects_3D[2].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*m_objects_in_scene.m_objects_3D[2].m_mesh);
+        set_blinn_phong(m_objects_in_scene.m_objects_3D[0].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
+        drawMesh(*m_objects_in_scene.m_objects_3D[0].m_mesh);
     }
 
     void drawFinaleScene(const p6::Context& ctx)

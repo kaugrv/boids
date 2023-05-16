@@ -26,8 +26,8 @@ struct MaterialParameters {
 struct Material {
     struct MaterialParameters m_parameters {};
 
-    std::shared_ptr<p6::Image>  m_texture; // p6::load_image("../assets/logo2.png")
-    std::shared_ptr<p6::Shader> m_shader;  // p6::load_shader("../src/shaders/3D.vs.glsl", "../src/shaders/light.fs.glsl")
+    std::shared_ptr<p6::Image>  m_texture; 
+    std::shared_ptr<p6::Shader> m_shader; 
 
     Material() = default;
 

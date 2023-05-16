@@ -13,7 +13,7 @@ struct Boid {
     glm::vec3 m_velocity{};
     glm::vec3 m_direction{};
     glm::vec3 m_rotation{0.};
-    glm::vec3 m_scale{1.};
+    glm::vec3 m_scale{0.3};
     float     m_speed{};
 
     // Constructors
@@ -59,11 +59,7 @@ struct Boid {
         ModelMatrix = glm::rotate(ModelMatrix, static_cast<float>(m_position.x * glm::radians(90.)), glm::vec3(0., 1., 0.));
         ModelMatrix = glm::rotate(ModelMatrix, static_cast<float>(m_position.y * glm::radians(-75.)), glm::vec3(1., 0., 0.));
 
-        // glm::vec3 Z      = glm::vec3(0.0f, 0.0f, 1.0f);
-        // float     angleY = glm::orientedAngle(Z, glm::normalize(glm::vec3(m_direction.x, 0.0f, m_direction.z)), glm::vec3(0.0f, 1.0f, 0.0f));
-        // ModelMatrix      = glm::rotate(ModelMatrix, glm::radians(angleY), glm::vec3(0.0f, 1.0f, 0.0f));
-        // float angleX = atan2(m_direction.y, m_direction.z);
-        // ModelMatrix  = glm::rotate(ModelMatrix, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
+        ModelMatrix = glm::scale(ModelMatrix, m_scale);
 
         return ModelMatrix;
     }
