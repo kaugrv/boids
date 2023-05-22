@@ -15,6 +15,12 @@ struct PointLight {
     glm::vec3 position;
     glm::vec3 color;
     float     intensity;
+
+    void updatae_light_position(const glm::vec3& surveyor_position) {
+        position = surveyor_position;
+        position.z +=0.1;
+
+    }
 };
 
 struct DirectionalLight {
@@ -22,3 +28,5 @@ struct DirectionalLight {
     glm::vec3 color;
     float     intensity;
 };
+
+
