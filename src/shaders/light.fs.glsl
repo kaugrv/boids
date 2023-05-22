@@ -23,9 +23,9 @@ uniform float intensity_direction[32];
 uniform int   nb_light_directionnal;
 
 // MATERIAL DATA
-uniform vec3  K_d;       // reflection coefficient (a color) DIFFUSE  // OK
-uniform vec3  K_s;       // glossy factor  // OK
-uniform float shininess; // OK
+uniform vec3  K_d;       // reflection coefficient (a color) DIFFUSE
+uniform vec3  K_s;       // glossy factor  
+uniform float shininess; 
 uniform float alpha;
 
 vec3 w_o = normalize(-vertexPos);
@@ -33,20 +33,22 @@ vec3 w_o = normalize(-vertexPos);
 // Bling phong for i light
 vec3 Blinn_Phong(int i)
 {
-    vec3 light_dir = normalize(w_i[i] - vertexPos); // actual w_i
+    vec3 light_dir = normalize(w_i[i] - vertexPos);
+    vec3 w_o = normalize(-vertexPos);
+    vec3 halfVector = normalize(w_o + light_dir);
 
-    vec3 halfVector = normalize((w_o + light_dir) / 2.);
+    float diffuseTerm = max(dot(light_dir, vertexNormal), 0.0);
+    vec3 diffuse = K_d * diffuseTerm;
 
-    vec3 diffuse = K_d * max(dot(light_dir, vertexNormal), 0.);
-    vec3 glossy  = K_s * (pow(max(dot(halfVector, vertexNormal), 0.), shininess));
+    float specularTerm = pow(max(dot(halfVector, vertexNormal), 0.0), shininess);
+    vec3 specular = K_s * specularTerm;
 
     float light_distance_i = distance(w_i[i], vertexPos);
-
     vec3 light_factor = intensity[i] * L_i[i] / (light_distance_i * light_distance_i);
 
-    // return glossy;
-    return light_factor * (diffuse + glossy);
+    return light_factor * (diffuse + specular);
 }
+
 
 vec3 Blinn_Phong_directionnal(int i)
 {
@@ -62,6 +64,7 @@ vec3 Blinn_Phong_directionnal(int i)
     // return glossy;
     return light_factor * (diffuse + glossy);
 }
+
 vec3 fog()
 {
     float dist = length(vertexPos);
@@ -86,9 +89,5 @@ void main()
     }
 
     fFragColor = vec4((point_light + dir_light) * texture(uTexture, texCoord).xyz, alpha);
-    //fFragColor = vec4(point_light + dir_light, alpha);
-    // fFragColor = vec4(point_light + dir_light, 1.);
-
-    // fFragColor = vec4(vertexNormal, alpha);
-    // fFragColor = vec4(texture(uTexture, texCoord).xyz, alpha);
+    //fFragColor = vec4(vertexNormal., 1.);
 }

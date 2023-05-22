@@ -128,14 +128,14 @@ public:
 
             const glm::vec3 normal = obstacle.get_normal(boid.m_position);
 
-            boid.m_velocity += avoid_strength * delta_time * normal / dist;
+            boid.m_velocity += avoid_strength * normal / dist;
 
             boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
         }
         else
         {
             const float abs_dist = std::fabs(obstacle.get_distance(boid.m_position));
-            if (abs_dist >= 0.3)
+            if (abs_dist >= 0.1)
             {
                 return;
             }
@@ -167,8 +167,8 @@ public:
 
     void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles)
     {
-        float avoid_distance = 0.3;
-        float avoid_strength = 500.;
+        float avoid_distance = 0.2;
+        float avoid_strength = 20000.;
         update_boid_number();
 
         for (auto& boid : m_boids)

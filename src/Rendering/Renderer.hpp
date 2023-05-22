@@ -33,17 +33,13 @@ struct Scene3D {
     std::vector<PointLight>       m_list_point_light;
     std::vector<DirectionalLight> m_list_dir_light;
 
-    // Objects in the scene
     ObjectsInScene m_objects_in_scene{};
 
     PostProcess m_post_process;
 
     // Constructor
     Scene3D(p6::Context& ctx)
-        : m_trackBallCamera(-5, 0, 0), m_freeCam(), m_post_process(ctx){
-
-    };
-
+        : m_trackBallCamera(-5, 0, 0), m_freeCam(), m_post_process(ctx){};
 
     void update_cameras(const MovementInput& input, float delta_time)
     {
@@ -98,31 +94,20 @@ struct Scene3D {
 
     void drawScene(const p6::Context& ctx)
     {
+        // Boids
         for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids)
         {
-            m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].m_material.m_shader->use();
-            glm::mat4 MVMatrix = getViewMatrix() * boid.getModelMatrix();
-            set_blinn_phong(m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-            drawMesh(*m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].m_mesh);
+            m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].drawObject(getViewMatrix(), boid.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
         }
 
         // Surveyor
-        m_objects_in_scene.m_objects_3D[4].m_material.m_shader->use();
-        glm::mat4 MVMatrix = getViewMatrix() * m_objects_in_scene.m_surveyor.getModelMatrix();
-        set_blinn_phong(m_objects_in_scene.m_objects_3D[4].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*m_objects_in_scene.m_objects_3D[4].m_mesh);
+        m_objects_in_scene.m_objects_3D[4].drawObject(getViewMatrix(), m_objects_in_scene.m_surveyor.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
 
         // Obstacle
-        m_objects_in_scene.m_objects_3D[5].m_material.m_shader->use();
-        MVMatrix = getViewMatrix() * glm::scale(glm::translate(glm::mat4(1.), glm::vec3(0., -0.5, 0.)), glm::vec3(0.2, 0.5, 0.2));
-        set_blinn_phong(m_objects_in_scene.m_objects_3D[5].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*m_objects_in_scene.m_objects_3D[5].m_mesh);
+        m_objects_in_scene.m_objects_3D[5].drawObject(getViewMatrix(), glm::scale(glm::translate(glm::mat4(1.), glm::vec3(0., -0.5, 0.)), glm::vec3(0.2, 0.5, 0.2)), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
 
         // CUBE
-        m_objects_in_scene.m_objects_3D[0].m_material.m_shader->use();
-        MVMatrix = getViewMatrix() * glm::mat4(1.);
-        set_blinn_phong(m_objects_in_scene.m_objects_3D[0].m_material, m_list_point_light, m_list_dir_light, MVMatrix, getProjMatrix(ctx));
-        drawMesh(*m_objects_in_scene.m_objects_3D[0].m_mesh);
+        m_objects_in_scene.m_objects_3D[0].drawObject(getViewMatrix(), glm::mat4(1.), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
     }
 
     void drawFinaleScene(const p6::Context& ctx)
