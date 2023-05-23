@@ -153,7 +153,7 @@ struct Application {
         MainScene.add_object_3D(box);
 
         Box bounds{glm::vec3(0.), glm::vec3(1.), true};
-        MainScene.add_obstacle(new Box(bounds));
+        MainScene.add_obstacle(std::make_unique<Box>(bounds));
     }
 
     void init_boids()
@@ -218,7 +218,7 @@ struct Application {
         MainScene.add_object_3D(building);
 
         Box building_obstacle{glm::vec3(0., -0.5, 0.), glm::vec3(0.2, 0.5, 0.2), false};
-        MainScene.add_obstacle(new Box(building_obstacle));
+        MainScene.add_obstacle(std::make_unique<Box>(building_obstacle));
     }
 
     void initialize()

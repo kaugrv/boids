@@ -76,12 +76,12 @@ struct Scene3D {
         return &m_objects_in_scene.m_obstacles;
     }
 
-    void add_obstacle(Obstacle* obstacle_ptr)
+    void add_obstacle(std::unique_ptr<Obstacle> obstacle_ptr)
     {
         if (obstacle_ptr != nullptr)
-            m_objects_in_scene.m_obstacles.push_back(std::unique_ptr<Obstacle>(obstacle_ptr));
+            m_objects_in_scene.m_obstacles.push_back(std::move(obstacle_ptr));
     }
-
+    
     void remove_obstacle()
     {
         m_objects_in_scene.m_obstacles.pop_back();
