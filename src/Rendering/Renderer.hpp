@@ -11,7 +11,9 @@
 #include "Object3D.hpp"
 #include "PostProcessing/post_process.hpp"
 #include "Sdf.hpp"
+#include "ShadowMap.hpp"
 #include "Surveyor/Surveyor.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 #include "shader_program.hpp"
 
@@ -35,11 +37,12 @@ struct Scene3D {
 
     ObjectsInScene m_objects_in_scene{};
 
+    ShadowMap   m_shadow_map;
     PostProcess m_post_process;
 
     // Constructor
     Scene3D(p6::Context& ctx)
-        : m_trackBallCamera(-5, 0, 0), m_freeCam(), m_post_process(ctx){};
+        : m_trackBallCamera(-5, 0, 0), m_freeCam(), m_post_process(ctx), m_shadow_map(ctx){};
 
     void update_cameras(const MovementInput& input, float delta_time)
     {
@@ -94,23 +97,44 @@ struct Scene3D {
 
     void drawScene(const p6::Context& ctx)
     {
-        // Boids
+        // Set up shadow map
+        glBindFramebuffer(GL_FRAMEBUFFER, m_shadow_map.m_frame_buffer_id);
+        glViewport(0, 0, m_shadow_map.m_shadow_map_resolution, m_shadow_map.m_shadow_map_resolution);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        // Render the scene from the light's perspective
         for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids)
         {
-            m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].drawObject(getViewMatrix(), boid.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
+            m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].drawObjectFromLightView(m_shadow_map.getLightSpaceMatrix(m_list_point_light[0], boid.getModelMatrix(), getProjMatrix(ctx)), boid.getModelMatrix(), getProjMatrix(ctx));
         }
 
-        // Obstacles
         for (int i = 0; i < m_objects_in_scene.m_obstacles.size() - 1; i++)
         {
-            m_objects_in_scene.m_objects_3D[5].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[1 + i]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
+            m_objects_in_scene.m_objects_3D[5].drawObjectFromLightView(m_shadow_map.getLightSpaceMatrix(m_list_point_light[0], m_objects_in_scene.m_obstacles[1 + i]->getModelMatrix(), getProjMatrix(ctx)), m_objects_in_scene.m_obstacles[1 + i]->getModelMatrix(), getProjMatrix(ctx));
         }
 
-        // Surveyor
-        m_objects_in_scene.m_objects_3D[4].drawObject(getViewMatrix(), m_objects_in_scene.m_surveyor.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
+        m_objects_in_scene.m_objects_3D[4].drawObjectFromLightView(m_shadow_map.getLightSpaceMatrix(m_list_point_light[0], m_objects_in_scene.m_surveyor.getModelMatrix(), getProjMatrix(ctx)), m_objects_in_scene.m_surveyor.getModelMatrix(), getProjMatrix(ctx));
 
-        // CUBE
-        m_objects_in_scene.m_objects_3D[0].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[0]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
+        m_objects_in_scene.m_objects_3D[0].drawObjectFromLightView(m_shadow_map.getLightSpaceMatrix(m_list_point_light[0], m_objects_in_scene.m_obstacles[0]->getModelMatrix(), getProjMatrix(ctx)), m_objects_in_scene.m_obstacles[0]->getModelMatrix(), getProjMatrix(ctx));
+
+        // Restore the default frame buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, ctx.main_canvas_width(), ctx.main_canvas_height());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Render the scene with shadow map
+        for (auto&& boid : m_objects_in_scene.m_group_of_boids.m_boids)
+        {
+            m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].drawObject(getViewMatrix(), boid.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light, m_shadow_map);
+        }
+
+        for (int i = 0; i < m_objects_in_scene.m_obstacles.size() - 1; i++)
+        {
+            m_objects_in_scene.m_objects_3D[5].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[1 + i]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light, m_shadow_map);
+        }
+
+        m_objects_in_scene.m_objects_3D[4].drawObject(getViewMatrix(), m_objects_in_scene.m_surveyor.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light, m_shadow_map);
+        m_objects_in_scene.m_objects_3D[0].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[0]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light, m_shadow_map);
     }
 
     void drawFinaleScene(const p6::Context& ctx)

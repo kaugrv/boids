@@ -1,4 +1,5 @@
 #version 330
+#extension GL_NV_shadow_samplers_cube : enable
 //  WE ARE IN VIEW COORDINATES
 
 in vec3 vertexPos; // in view coordinates
@@ -7,7 +8,9 @@ in vec2 texCoord;
 
 uniform sampler2D uTexture;
 
-out vec4 fFragColor;
+uniform samplerCube shadowMap; // Shadow map texture
+in vec4             fragPosLightSpace;
+out vec4            fFragColor;
 
 // LIGHTS DATA
 // Point
@@ -92,8 +95,22 @@ void main()
         dir_light += Blinn_Phong_directionnal(i);
     }
 
-    fFragColor = vec4((point_light + dir_light) * texture(uTexture, texCoord).xyz, alpha);
-    // fFragColor = vec4(point_light, 1.);
-    // fFragColor = vec4(vertexNormal, alpha);
-    // fFragColor = vec4(vertexPos, 1.);
+    // Calculate normalized device coordinates (NDC) of the fragment
+    vec3 fragPosNDC = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // Convert NDC to texture coordinates (from [-1, 1] to [0, 1])
+    vec3 fragPosShadowMap = 0.5 * fragPosNDC + 0.5;
+
+    // Compare the depth value in the shadow map to the current fragment's depth value
+    float shadow = 0.0;
+    if (textureCube(shadowMap, fragPosShadowMap).r < fragPosShadowMap.z)
+    {
+        // Fragment is in shadow
+        shadow = 1.0;
+    }
+
+    fFragColor = vec4((point_light + dir_light) * texture(uTexture, texCoord).xyz * (1.0 - shadow), alpha);
+    // fFragColor = vec4((point_light + dir_light) * texture(uTexture, texCoord).xyz, alpha);
+    //  fFragColor = vec4(point_light, 1.);
+    //  fFragColor = vec4(vertexNormal, alpha);
+    //  fFragColor = vec4(vertexPos, 1.);
 }

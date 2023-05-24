@@ -61,7 +61,7 @@ public:
         return sd_box(position, m_obstacle_position, m_size);
     }
 
-    glm::mat4 getModelMatrix()
+    glm::mat4 getModelMatrix() override
     {
         glm::mat4 ModelMatrix(1.0f);
 
@@ -87,7 +87,7 @@ public:
         return sd_sphere(position, m_obstacle_position, m_radius);
     }
 
-    glm::mat4 getModelMatrix()
+    glm::mat4 getModelMatrix() override
     {
         glm::mat4 ModelMatrix(1.0f);
 

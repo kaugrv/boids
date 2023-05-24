@@ -3,6 +3,7 @@
 #include <ostream>
 #include <vector>
 #include "Material.hpp"
+#include "Rendering/ShadowMap.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/scalar_constants.hpp"
 #include "glm/fwd.hpp"
@@ -39,6 +40,13 @@ void set_material(p6::Shader& shader, const Material& material)
     shader.set("shininess", material.m_parameters.shininess);
     shader.set("alpha", material.m_parameters.alpha);
     shader.set("uTexture", *material.m_texture);
+}
+
+void set_shadow_map(p6::Shader& shader, const ShadowMap& shadowMap, const glm::mat4& ModelMatrix, const glm::mat4& ProjMatrix, PointLight light)
+{
+    int shadowMapTextureUnit = 0; // Use the appropriate texture unit here
+    shader.set("shadowMap", shadowMapTextureUnit);
+    shader.set("lightSpaceMatrix", shadowMap.getLightSpaceMatrix(light, ModelMatrix, ProjMatrix));
 }
 
 void send_light_pos_uniform(p6::Shader& shader, const lightDatas& light_datas)
@@ -120,9 +128,11 @@ lightDatas fill_light_data(const std::vector<T>& list_light, const glm::mat4& vi
     return lights_datas;
 }
 
-void set_blinn_phong(Material& material, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& ViewMatrix, const glm::mat4& ModelMatrix, const glm::mat4& ProjMatrix)
+void set_blinn_phong(Material& material, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& ViewMatrix, const glm::mat4& ModelMatrix, const glm::mat4& ProjMatrix, const ShadowMap& shadowMap)
 {
     set_matrix(*material.m_shader, ViewMatrix * ModelMatrix, ProjMatrix);
     set_material(*material.m_shader, material);
     set_lights(*material.m_shader, list_light, list_directionnal_light, ViewMatrix);
+
+    set_shadow_map(*material.m_shader, shadowMap, ModelMatrix, ProjMatrix, list_light[0]);
 }
