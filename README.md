@@ -8,13 +8,15 @@ Wendy Gervais & Tristan Debeaune
 # 3D Version
 ![ezgif-1-561ba0ed77](https://user-images.githubusercontent.com/103901906/235307217-e818496f-7bb5-4e68-bda2-4ca2a3c2072e.gif)
 
+![Capture](https://github.com/kaugrv/boids/assets/95277215/56433e09-ba08-46f0-9747-849c6995c1e2)
+
 
 ## GUI
-- [ X ] Dear ImGui  
+- [X] Dear ImGui  
 
 ##  Boids
 - [X] Original 3D modelisation  
-- [ ] LODs
+- [X] LODs
 
 ##  Environment
 - [X] Textured cube  
@@ -22,11 +24,11 @@ Wendy Gervais & Tristan Debeaune
 
 ##  Surveyor
 - [X] Original 3D modelisation  
-- [ ] 3rd person  
-- [ ] Ponctual Light
+- [X] 3rd person  
+- [X] Ponctual Light
 
 ## Lights
-- [ ] > 2, one on the surveyor  
+- [X] > 2, one on the surveyor  
 - [ ] One must generate shadows
 
 ##  Bonus
