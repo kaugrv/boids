@@ -19,15 +19,15 @@ struct BoidGroupParameters {
     float m_separation{0.};
     float m_alignment{0.};
     float m_radius{0.5};
-    int   m_boid_nb{1};
+    int   m_boid_nb{100};
     bool  m_display_visual_range{false};
-    int m_LOD{1};
+    int   m_LOD{1};
 };
 
 class BoidGroup {
 public:
     BoidGroupParameters m_behavior{};
-    std::vector<Boid> m_boids{};
+    std::vector<Boid>   m_boids{};
 
     BoidGroup() = default;
     BoidGroup(const Boid& base_boid, const unsigned int& boid_number)

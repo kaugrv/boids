@@ -99,8 +99,9 @@ struct Scene3D {
         {
             m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].drawObject(getViewMatrix(), boid.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
         }
+
         // Obstacles
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < m_objects_in_scene.m_obstacles.size() - 1; i++)
         {
             m_objects_in_scene.m_objects_3D[5].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[1 + i]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
         }

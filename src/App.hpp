@@ -124,21 +124,19 @@ struct Application {
 
         list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/metal.png")));    // 1
         list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/test2.png")));    // 2
-        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/building.png"))); // 3
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/building.jpg"))); // 3
     }
 
     void init_lights()
     {
-        DirectionalLight dir_light{.direction = glm::vec3(0., 1., 0.), .color = glm::vec3(1., 1., 1.), .intensity = 0.5};
-        DirectionalLight dir_light2{.direction = glm::vec3(-1., 1., 0.), .color = glm::vec3(1., 1., 1.), .intensity = 0.5};
+        DirectionalLight dir_light{.direction = glm::vec3(0.5, 0.5, 0.5), .color = glm::vec3(0., 0., 1.), .intensity = 0.1};
+        MainScene.add_dir_light(dir_light);
 
-        PointLight point_light{.position = glm::vec3{0., 0., 0.}, .color = glm::vec3(1., 1., 1.), .intensity = 0.5};
-        // PointLight point_light2{.position = glm::vec3{0., 1., 0.}, .color = glm::vec3(0., 0., 1.), .intensity = 0.1};
+        PointLight point_light_surveyor{.position = glm::vec3{0., 0., 0.}, .color = glm::vec3(1., 0.8, 0.8), .intensity = 0.8};
+        PointLight point_light{.position = glm::vec3{1., -10., 0.}, .color = glm::vec3(0., 1., 1.), .intensity = 1.};
 
-        // MainScene.add_dir_light(dir_light);
-        // MainScene.add_dir_light(dir_light2);
+        MainScene.add_point_light(point_light_surveyor);
         MainScene.add_point_light(point_light);
-        // MainScene.add_point_light(point_light2);
     }
 
     void init_cube()
@@ -150,7 +148,7 @@ struct Application {
 
         list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
 
-        Material box_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 0.5}, list_shaders_used[0], list_images_used[2]);
+        Material box_material(MaterialParameters{.diffuse = glm::vec3(1., 1., 1.), .reflexion = glm::vec3(0.), .glossy = glm::vec3(0.), .shininess = 0., .alpha = 0.5}, list_shaders_used[0], list_images_used[2]);
 
         Object3D box{.m_mesh = list_mesh_used[0], .m_material = box_material};
         MainScene.add_object_3D(box);
@@ -165,7 +163,7 @@ struct Application {
         std::vector<tinyobj::shape_t>    car_shapes;
         std::vector<tinyobj::material_t> car_materials;
 
-        Material car_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[2]);
+        Material car_material(MaterialParameters{.diffuse = glm::vec3(1., 1., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 0.5, .alpha = 1.}, list_shaders_used[0], list_images_used[1]);
 
         // Low
         tinyobj::LoadObj(car_shapes, car_materials, "../assets/models/peugeot_low.obj");
@@ -202,7 +200,7 @@ struct Application {
         Mesh surveyor_mesh(surveyor_shapes);
         list_mesh_used.push_back(std::make_shared<Mesh>(surveyor_mesh));
 
-        Material surveyor_material(MaterialParameters{.diffuse = glm::vec3(0.5, 0., 0), .reflexion = glm::vec3(0.1), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
+        Material surveyor_material(MaterialParameters{.diffuse = glm::vec3(1., 1., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 0.5, .alpha = 1.}, list_shaders_used[0], list_images_used[1]);
 
         Object3D surveyor_object{.m_mesh = list_mesh_used[4], .m_material = surveyor_material};
         MainScene.add_object_3D(surveyor_object);
@@ -211,25 +209,37 @@ struct Application {
         MainScene.m_objects_in_scene.m_surveyor = surveyor;
     }
 
-    void init_obstacles()
+    void init_obstacles(int nb_buildings)
     {
         // Obstacle (building)
 
         std::vector<tinyobj::shape_t>    box_shapes;
         std::vector<tinyobj::material_t> box_materials;
-        tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
+        tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/building.obj");
         Mesh box_mesh(box_shapes);
         list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
-        Material building_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[3]);
+        Material building_material(MaterialParameters{.diffuse = glm::vec3(0.5, 0.5, 0.5), .reflexion = glm::vec3(0.2), .glossy = glm::vec3(0.5), .shininess = 0.5, .alpha = 1.}, list_shaders_used[0], list_images_used[2]);
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < nb_buildings; i++)
         {
             Object3D building{.m_mesh = list_mesh_used[5], .m_material = building_material};
             MainScene.add_object_3D(building);
-            Box building_obstacle{glm::vec3(p6::random::number(-10., 10.), -5., p6::random::number(-5., 5.)), glm::vec3(p6::random::number(0.1, 0.3), p6::random::number(1., 20.), p6::random::number(0.1, 0.3)), false};
-            // Box building_obstacle{glm::vec3(p6::random::number(-10., 10.), -5., p6::random::number(-5., 5.)), glm::vec3(1., 1., 1.), false};
+
+            glm::vec3 position = glm::vec3(p6::random::number(-15., 15.), -5., p6::random::number(-15., 15.));
+            glm::vec3 size     = glm::vec3(p6::random::number(0.2, 0.4), p6::random::number(1., 15.), p6::random::number(0.2, 0.4));
+
+            Box building_obstacle{position, size, false};
             MainScene.add_obstacle(std::make_unique<Box>(building_obstacle));
         }
+
+        Object3D building{.m_mesh = list_mesh_used[5], .m_material = building_material};
+        MainScene.add_object_3D(building);
+
+        glm::vec3 position = glm::vec3(0., -20., 0.);
+        glm::vec3 size     = glm::vec3(1., 19., 1.);
+
+        Box building_obstacle{position, size, false};
+        MainScene.add_obstacle(std::make_unique<Box>(building_obstacle));
     }
 
     void initialize()
@@ -253,13 +263,13 @@ struct Application {
         init_cube();
         init_boids();
         init_surveyor();
-        init_obstacles();
+        init_obstacles(200);
     };
 
     void update()
     {
         ctx.update = [&]() {
-            ctx.background(p6::Color{0.f, 0.f, 0.3f});
+            ctx.background(p6::Color{0.1f, 0.1f, 0.3f});
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Input update
