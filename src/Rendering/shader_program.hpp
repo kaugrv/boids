@@ -120,9 +120,9 @@ lightDatas fill_light_data(const std::vector<T>& list_light, const glm::mat4& vi
     return lights_datas;
 }
 
-void set_blinn_phong(Material& material, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& MV, const glm::mat4& ProjMatrix)
+void set_blinn_phong(Material& material, const std::vector<PointLight>& list_light, const std::vector<DirectionalLight>& list_directionnal_light, const glm::mat4& ViewMatrix, const glm::mat4& ModelMatrix, const glm::mat4& ProjMatrix)
 {
-    set_matrix(*material.m_shader, MV, ProjMatrix);
+    set_matrix(*material.m_shader, ViewMatrix * ModelMatrix, ProjMatrix);
     set_material(*material.m_shader, material);
-    set_lights(*material.m_shader, list_light, list_directionnal_light, MV);
+    set_lights(*material.m_shader, list_light, list_directionnal_light, ViewMatrix);
 }

@@ -120,11 +120,11 @@ struct Application {
 
     void init_textures()
     {
-        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/blank.png"))); //0
-        
-        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/metal.png"))); //1
-        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/test2.png"))); //2
-        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/building.png"))); //3
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/blank.png"))); // 0
+
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/metal.png")));    // 1
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/test2.png")));    // 2
+        list_images_used.push_back(std::make_shared<p6::Image>(p6::load_image("../assets/textures/building.png"))); // 3
     }
 
     void init_lights()
@@ -132,10 +132,13 @@ struct Application {
         DirectionalLight dir_light{.direction = glm::vec3(0., 1., 0.), .color = glm::vec3(1., 1., 1.), .intensity = 0.5};
         DirectionalLight dir_light2{.direction = glm::vec3(-1., 1., 0.), .color = glm::vec3(1., 1., 1.), .intensity = 0.5};
 
-        PointLight       point_light{.position = glm::vec3{0.8, 0., 0.}, .color = glm::vec3(1., 1., 1.), .intensity = 0.3};
-        MainScene.add_dir_light(dir_light);
-        MainScene.add_dir_light(dir_light2);
+        PointLight point_light{.position = glm::vec3{0., 0., 0.}, .color = glm::vec3(1., 1., 1.), .intensity = 0.5};
+        // PointLight point_light2{.position = glm::vec3{0., 1., 0.}, .color = glm::vec3(0., 0., 1.), .intensity = 0.1};
+
+        // MainScene.add_dir_light(dir_light);
+        // MainScene.add_dir_light(dir_light2);
         MainScene.add_point_light(point_light);
+        // MainScene.add_point_light(point_light2);
     }
 
     void init_cube()
@@ -187,11 +190,10 @@ struct Application {
 
         BoidGroup group_of_boids(1);
         MainScene.m_objects_in_scene.m_group_of_boids = group_of_boids;
-
     }
 
-    void init_surveyor(){
-        
+    void init_surveyor()
+    {
         // Surveyor
         std::vector<tinyobj::shape_t>    surveyor_shapes;
         std::vector<tinyobj::material_t> surveyor_materials;
@@ -212,13 +214,22 @@ struct Application {
     void init_obstacles()
     {
         // Obstacle (building)
-        Material building_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 0., .alpha = 1.}, list_shaders_used[0], list_images_used[0]);
 
-        Object3D building{.m_mesh = list_mesh_used[0], .m_material = building_material};
-        MainScene.add_object_3D(building);
+        std::vector<tinyobj::shape_t>    box_shapes;
+        std::vector<tinyobj::material_t> box_materials;
+        tinyobj::LoadObj(box_shapes, box_materials, "../assets/models/cube.obj");
+        Mesh box_mesh(box_shapes);
+        list_mesh_used.push_back(std::make_shared<Mesh>(box_mesh));
+        Material building_material(MaterialParameters{.diffuse = glm::vec3(0., 0., 1.), .reflexion = glm::vec3(0.5), .glossy = glm::vec3(0.5), .shininess = 2., .alpha = 1.}, list_shaders_used[0], list_images_used[3]);
 
-        Box building_obstacle{glm::vec3(0., -0.5, 0.), glm::vec3(0.2, 0.5, 0.2), false};
-        MainScene.add_obstacle(std::make_unique<Box>(building_obstacle));
+        for (int i = 0; i < 50; i++)
+        {
+            Object3D building{.m_mesh = list_mesh_used[5], .m_material = building_material};
+            MainScene.add_object_3D(building);
+            Box building_obstacle{glm::vec3(p6::random::number(-10., 10.), -5., p6::random::number(-5., 5.)), glm::vec3(p6::random::number(0.1, 0.3), p6::random::number(1., 20.), p6::random::number(0.1, 0.3)), false};
+            // Box building_obstacle{glm::vec3(p6::random::number(-10., 10.), -5., p6::random::number(-5., 5.)), glm::vec3(1., 1., 1.), false};
+            MainScene.add_obstacle(std::make_unique<Box>(building_obstacle));
+        }
     }
 
     void initialize()
@@ -268,8 +279,7 @@ struct Application {
             MainScene.m_post_process.update_from_GUI_parameters(post_processGUI);
             MainScene.m_objects_in_scene.m_group_of_boids.update_all_boids(ctx.delta_time(), *MainScene.get_obstacles()); // Update all boids of the group
             MainScene.m_objects_in_scene.m_surveyor.update_position(ctx.delta_time(), input.m_keyboard, MainScene.freecam_is_used, MainScene.m_freeCam.get_position());
-
-            MainScene.m_list_point_light[0].updatae_light_position(MainScene.m_objects_in_scene.m_surveyor.m_position);
+            MainScene.m_list_point_light[0].update_light_position(MainScene.m_objects_in_scene.m_surveyor.m_position);
 
             // Draw
             post_processGUI.m_is_post_process_activated ? MainScene.drawFinaleScene(ctx) : MainScene.drawScene(ctx);
