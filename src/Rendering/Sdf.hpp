@@ -2,6 +2,9 @@
 
 #include <cmath>
 #include <vector>
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/fwd.hpp"
+#include "glm/geometric.hpp"
 #include "p6/p6.h"
 
 // Thanks to Inigo Quilez https://iquilezles.org/articles/distfunctions/
@@ -39,6 +42,7 @@ public:
         return m_bound;
     }
 
+    virtual glm::mat4 getModelMatrix(){};
 };
 
 class Box : public Obstacle {
@@ -57,6 +61,15 @@ public:
         return sd_box(position, m_obstacle_position, m_size);
     }
 
+    glm::mat4 getModelMatrix()
+    {
+        glm::mat4 ModelMatrix(1.0f);
+
+        ModelMatrix = glm::translate(ModelMatrix, m_obstacle_position);
+        ModelMatrix = glm::scale(ModelMatrix, m_size);
+
+        return ModelMatrix;
+    };
 };
 
 class Sphere : public Obstacle {
@@ -74,4 +87,13 @@ public:
         return sd_sphere(position, m_obstacle_position, m_radius);
     }
 
+    glm::mat4 getModelMatrix()
+    {
+        glm::mat4 ModelMatrix(1.0f);
+
+        ModelMatrix = glm::translate(ModelMatrix, m_obstacle_position);
+        ModelMatrix = glm::scale(ModelMatrix, glm::vec3(m_radius));
+
+        return ModelMatrix;
+    };
 };

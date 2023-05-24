@@ -81,7 +81,7 @@ struct Scene3D {
         if (obstacle_ptr != nullptr)
             m_objects_in_scene.m_obstacles.push_back(std::move(obstacle_ptr));
     }
-    
+
     void remove_obstacle()
     {
         m_objects_in_scene.m_obstacles.pop_back();
@@ -99,15 +99,17 @@ struct Scene3D {
         {
             m_objects_in_scene.m_objects_3D[m_objects_in_scene.m_group_of_boids.m_behavior.m_LOD].drawObject(getViewMatrix(), boid.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
         }
+        // Obstacles
+        for (int i = 0; i < 50; i++)
+        {
+            m_objects_in_scene.m_objects_3D[5].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[1 + i]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
+        }
 
         // Surveyor
         m_objects_in_scene.m_objects_3D[4].drawObject(getViewMatrix(), m_objects_in_scene.m_surveyor.getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
 
-        // Obstacle
-        m_objects_in_scene.m_objects_3D[5].drawObject(getViewMatrix(), glm::scale(glm::translate(glm::mat4(1.), glm::vec3(0., -0.5, 0.)), glm::vec3(0.2, 0.5, 0.2)), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
-
         // CUBE
-        m_objects_in_scene.m_objects_3D[0].drawObject(getViewMatrix(), glm::mat4(1.), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
+        m_objects_in_scene.m_objects_3D[0].drawObject(getViewMatrix(), m_objects_in_scene.m_obstacles[0]->getModelMatrix(), getProjMatrix(ctx), m_list_point_light, m_list_dir_light);
     }
 
     void drawFinaleScene(const p6::Context& ctx)
