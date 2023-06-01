@@ -5,10 +5,15 @@
 S4 IMAC Project.  
 Wendy Gervais & Tristan Debeaune  
 
-# 3D Version
-![ezgif-1-561ba0ed77](https://user-images.githubusercontent.com/103901906/235307217-e818496f-7bb5-4e68-bda2-4ca2a3c2072e.gif)
 
-![Capture](https://github.com/kaugrv/boids/assets/95277215/56433e09-ba08-46f0-9747-849c6995c1e2)
+![boids evolution](https://github.com/kaugrv/boids/assets/103901906/0f420e56-64dd-47e7-97b2-627bbb9e1a54)
+
+# 3D Version
+
+![ezgif-3-b8ad07c086](https://github.com/kaugrv/boids/assets/103901906/a0914f4e-06c3-485e-bdb7-39108685483d)
+
+![boids](https://github.com/kaugrv/boids/assets/103901906/443269a6-cfee-4f86-bcd3-267926b886ac)
+
 
 
 ## GUI
