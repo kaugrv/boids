@@ -118,7 +118,7 @@ struct Scene3D {
         // POST PROCESS TEST
         //     first I bind my frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, m_post_process.m_frame_buffer.m_frame_buffer_id);
-        glClearColor(0.f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
         glEnable(GL_DEPTH_TEST);
 
@@ -126,7 +126,7 @@ struct Scene3D {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
         glDisable(GL_DEPTH_TEST);
-        glClearColor(0.f, 1.0f, 1.0f, 0.0f);
+        glClearColor(0.1f, 0.1f, 0.3f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         m_post_process.m_shader.use();
