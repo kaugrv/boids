@@ -48,7 +48,7 @@ struct Scene3D {
 
     glm::mat4 getViewMatrix()
     {
-        return freecam_is_used ? m_freeCam.getViewMatrix() : m_trackBallCamera.getViewMatrix();
+        return freecam_is_used ? m_freeCam.getViewMatrix() : m_trackBallCamera.getViewMatrix(m_objects_in_scene.m_surveyor.m_position);
     }
 
     glm::mat4 getProjMatrix(const p6::Context& ctx)
