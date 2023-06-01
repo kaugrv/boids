@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 # ---Choose project name---
-project(Simple-p6-Setup)
+project(BoidsRunner)
 
 # ---Declare source files---
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS src/*)
