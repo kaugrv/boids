@@ -128,7 +128,7 @@ public:
 
             const glm::vec3 normal = obstacle.get_normal(boid.m_position);
 
-            boid.m_velocity += avoid_strength * normal / dist;
+            boid.m_velocity += (avoid_strength * normal / dist)*delta_time;
 
             boid.m_velocity = glm::normalize(boid.m_velocity) * boid.m_speed;
         }
@@ -167,8 +167,8 @@ public:
 
     void update_all_boids(const float& delta_time, const std::vector<std::unique_ptr<Obstacle>>& obstacles)
     {
-        float avoid_distance = 0.2;
-        float avoid_strength = 20000.;
+        float avoid_distance = 0.4;
+        float avoid_strength = 2;
         update_boid_number();
 
         for (auto& boid : m_boids)
