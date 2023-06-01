@@ -38,9 +38,10 @@ public:
     glm::mat4 getViewMatrix(glm::vec3 surveyor_position) const
     {
         glm::mat4 V(1);
-        V = glm::translate(V, glm::vec3(0., 0., m_fDistance)+glm::vec3(surveyor_position.x, -surveyor_position.y, surveyor_position.z));
+        V = glm::translate(V,glm::vec3(0., 0., m_fDistance));
         V = glm::rotate(V, m_fAngleY, glm::vec3(0., 1., 0.));
         V = glm::rotate(V, m_fAngleX, glm::vec3(1., 0., 0.));
+        V = glm::translate(V,glm::vec3(-surveyor_position.x, -surveyor_position.y, -surveyor_position.z));
         return V;
     }
 
