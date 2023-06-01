@@ -280,7 +280,7 @@ struct Application {
 
             // GUI
             ImGui::Begin("Parameters");
-            ImGui::Checkbox("Use Free Camera", &MainScene.freecam_is_used);
+            ImGui::Checkbox("First Person", &MainScene.freecam_is_used);
             update_GUI(GUI, post_processGUI);
             ImGui::End();
 

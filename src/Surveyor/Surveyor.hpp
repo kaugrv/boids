@@ -50,9 +50,7 @@ struct Surveyor {
 
         else
         {
-            m_position.x = cam_position.x;
-            m_position.y = cam_position.y - 0.2;
-            m_position.z = cam_position.z + 0.3;
+            m_position = cam_position;
         }
     }
 };
