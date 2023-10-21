@@ -15,6 +15,10 @@ Wendy Gervais & Tristan Debeaune
 ![boids](https://github.com/kaugrv/boids/assets/103901906/443269a6-cfee-4f86-bcd3-267926b886ac)
 
 
+![boids_2png](https://github.com/kaugrv/boids/assets/95277215/2b87c568-91b3-405e-a401-f3bdd2655841)
+
+![boids](https://github.com/kaugrv/boids/assets/95277215/a7cd7b9d-bfe9-4bf8-b3a8-bd50be917f77)
+
 
 ## GUI
 - [X] Dear ImGui  
